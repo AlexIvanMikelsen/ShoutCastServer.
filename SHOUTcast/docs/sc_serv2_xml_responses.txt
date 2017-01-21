@@ -1,0 +1,271 @@
+            Nullsoft SHOUTcast DNAS Server Version 2 (sc_serv) XML Responses
+                              (Last Updated 07 April 2011)
+
+
+1.0   Introduction
+2.0   How to Access XML Responses
+2.1     Full Server Summary
+2.2     General Server Summary
+2.3     Listener Stats
+2.4     Song History
+2.5     Stream Metadata
+2.6     Stream Configurations
+2.7     Nextsongs
+3.0   Equivalent of 7.html
+
+
+
+1.0   Introduction
+------------------
+
+The purpose of this document is to show you the information and format of the different
+xml responses which the SHOUTcast v2 server is able to generate allowing accessing to the
+information about the current connections or available stream configurations for example.
+
+
+
+2.0   How to Access XML Responses
+---------------------------------
+
+Due to the SHOUTcast v2 DNAS being able to support multiple streams, it requires you to
+specify the stream identifier of the stream that you require information about.
+
+So to access the General Server Summary (see section 2.2) for stream identifier 1 then 
+the following would be used:
+
+  http://<serverip>:<port>/admin.cgi?mode=viewxml&page=1&sid=1
+  or
+  http://<serverip>:<port>/stats?sid=1
+
+To access the same for stream identifier then replace 1 with 2 and so on for any other
+streams you want to obtain the information from.
+
+Note: Throughout the rest of this document, it is assumed you know how to specify the
+      stream identifier you require so only the base part of the url is shown i.e. /stats
+      instead of /stats?sid=#
+
+
+2.1   Full Server Summary
+-------------------------
+
+When using the administrative admin.cgi?mode=viewxml option the xml response is of the
+general details about stream as is shown in a dispersed manner over the administration
+and public summary pages as well as details of the Listener Stats (see section 2.3) and
+Song History (see section 2.4).
+
+If you only require a specific set of information then you should look at the &page=X
+parameter when accessing the admin.cgi?mode=viewxml option as the xml response from this
+option is a combination of the following responses:
+
+  General Server Summary  (section 2.2)
+  Listener Stats          (section 2.3)
+  Song History            (section 2.4)
+
+
+
+2.2   General Server Summary
+----------------------------
+
+When using the administrative admin.cgi?mode=viewxml&page=1 or the public /stats option
+the xml response is of the general details about stream as is shown in a dispersed manner
+over the administration and public summary pages. This is a compact version of what is
+otherwise shown in the 'Full Server Summary' (see section 2.1) and acts as the equivalent
+of 7.html (see section 3.0).
+
+Example:
+
+  <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+  <SHOUTCASTSERVER>
+    <CURRENTLISTENERS>0</CURRENTLISTENERS>
+    <PEAKLISTENERS>0</PEAKLISTENERS>
+    <MAXLISTENERS>32</MAXLISTENERS>
+    <UNIQUELISTENERS>0</UNIQUELISTENERS>
+    <!-- average time (seconds) of any active client connections -->
+    <AVERAGETIME>0</AVERAGETIME>
+
+    <!-- these are some information about the stream as shown in clients, etc -->
+    <SERVERGENRE>Misc</SERVERGENRE>
+    <SERVERURL>http://my_website.com</SERVERURL>
+    <SERVERTITLE>Test Server</SERVERTITLE>
+
+    <!-- if the SHOUTcast source provides current and next song titles then -->
+    <!-- they will be listed. if not known then these will be empty entries -->
+    <SONGTITLE>The Current Song</SONGTITLE>
+    <NEXTTITLE>The Next Song</NEXTTITLE>
+
+    <!-- these 3 are only listed if the stream is from a SHOUTcast v1 source -->
+    <!-- otherwise they are not included as v2 sources do not support them -->
+    <IRC></IRC>
+    <ICQ></ICQ>
+    <AIM></AIM>
+
+    <!-- cumulative total of any attempts to connect to the stream when it is active -->
+    <STREAMHITS>0</STREAMHITS>
+
+    <!-- shows 1 if a source is connected and 0 if there is no source -->
+    <!-- note: if there is no source then no client connections occur -->
+    <STREAMSTATUS>1</STREAMSTATUS>
+
+    <!-- infomation about the format of the stream content and access path-->
+    <STREAMPATH>/test.aac</STREAMPATH>
+    <BITRATE>320</BITRATE>
+    <CONTENT>audio/aacp</CONTENT>
+
+    <!-- version of the SHOUTcast server being used -->
+    <VERSION>0.2.0.0 0.0.21.0</VERSION>
+  </SHOUTCASTSERVER>
+
+
+2.3   Listener Stats
+--------------------
+
+When using the administrative admin.cgi?mode=viewxml&page=3 option the xml response is of
+the details about currently connected clients to the server for this stream. If there are
+no clients connected to then there will be no <LISTENER> entries in the xml response.
+
+Example:
+
+  <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+  <SHOUTCASTSERVER>
+    <LISTENERS>
+      <LISTENER>
+        <HOSTNAME>127.0.0.1</HOSTNAME>
+        <USERAGENT>WinampMPEG/5.61</USERAGENT>
+        <CONNECTTIME>1337</CONNECTTIME>
+        <!-- a unique number for the client connection used to determine duplicates -->
+        <UID>01234567</UID>
+      </LISTENER>
+    </LISTENERS>
+  </SHOUTCASTSERVER>
+
+
+2.4   Song History
+------------------
+
+When using the administrative admin.cgi?mode=viewxml&page=4 option the xml response is of
+the currently stored played song history (if enabled) of the stream. If any song titles
+have been sent to the server then they will displayed up to the number of songs played as
+per the 'songhistory' option (see sc_serv2.txt - section 4.0.7) otherwise there will be
+no <SONG> entries in the xml response.
+
+Example:
+
+  <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+  <SHOUTCASTSERVER>
+    <SONGHISTORY>
+      <SONG>
+        <!-- PLAYEDAT is a raw time_t (UTC time) value of when the song was started -->
+        <PLAYEDAT>1302180341</PLAYEDAT>
+        <TITLE>The Previous Title</TITLE>
+      </SONG>
+      <SONG>
+        <PLAYEDAT>1302175246</PLAYEDAT>
+        <TITLE>The Current Song</TITLE>
+      </SONG>
+    </SONGHISTORY>
+  </SHOUTCASTSERVER>
+
+
+2.5   Stream Metadata
+---------------------
+
+When using the administrative admin.cgi?mode=viewxml&page=5 option the xml response is of
+the currently stored stream metadata as provided by the connected SHOUTcast source. This
+can just be a title (typically with a SHOUTcast v1 source) or can be a complete metadata
+block with a SHOUTcast v2 source which is providing all data from an mp3 file.
+
+Example:
+
+  <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+  <SHOUTCASTSERVER>
+    <SONGMETADATA>
+      <!-- this will be the only entry if a SHOUTcast v1 source is connected -->
+      <TIT2>The Current Title</TIT2>
+      <TALB>The Album Title</TALB>
+      <TPE1>The Artist</TPE1>
+      <TYER>2011</TYER>
+      <TCON>Podcast</TCON>
+      <TENC>SHOUTcast Source DSP Plug-in v2.2.0 BUILD 099</TENC>
+      <TRSN>My SHOUTcast Server</TRSN>
+      <WORS>http://www.shoutcast.com</WORS>
+    </SONGMETADATA>
+  </SHOUTCASTSERVER>
+
+Detailed information on the supported fields and also suggested fields to be provided by
+a SHOUTcast v2 source can be found in sc2_xml_metadata.txt.
+
+
+2.6   Stream Configurations
+---------------------------
+
+When using the administrative admin.cgi?mode=viewxml&page=6 option the xml response is of
+the currently known stream configuration details (based on the options set in the loaded
+configuration file) and any global stream configuration options which are applicable.
+
+Note: This is a global action and when used the stream identifier will not be used but is
+      still required to be specified and to be a valid stream identifier when requested.
+
+Example:
+
+  <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+  <SHOUTCASTSERVER>
+    <STREAMCONFIGS>
+      <!-- these are global settings / information about the stream configurations -->
+      <!-- if REQUIRECONFIGS is 1 then only source connections matching are allowed -->
+      <REQUIRECONFIGS>0</REQUIRECONFIGS>
+      <SERVERMAXLISTENERS>32</SERVERMAXLISTENERS>
+      <!-- this is the total number of stream configurations known and enabled -->
+      <TOTALCONFIGS>1</TOTALCONFIGS>
+
+      <!-- the value of 'id' relates to 'streamid' and is used to identify the group -->
+      <STREAMCONFIG id="1">
+        <STREAMAUTHHASH>my_aush_hash_if_entered</STREAMAUTHHASH>
+        <STREAMPATH>/listen1</STREAMPATH>
+        <STREAMRELAYURL></STREAMRELAYURL>
+        <!-- if set as SERVERMAXLISTENERS then the global SERVERMAXLISTENERS is in use -->
+        <STREAMMAXLISTENERS>SERVERMAXLISTENERS</STREAMMAXLISTENERS>
+        <STREAMPUBLIC>never</STREAMPUBLIC>
+        <STREAMALLOWRELAY>1</STREAMALLOWRELAY>
+        <STREAMPUBLICRELAY>1</STREAMPUBLICRELAY>
+      </STREAMCONFIG>
+    </STREAMCONFIGS>
+  </SHOUTCASTSERVER>
+
+
+2.7   Nextsongs
+---------------
+
+When using the public /nextsongs admin option the xml response contains a list of titles
+(if available from the source) of the songs which are to be played after the currently
+playing song finishes. The number of song titles returned is determinded by the source so
+this file can contain no titles or it could contain 10 titles.
+
+Example:
+
+  <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+  <SHOUTCASTSERVER>
+    <NEXTSONGS>
+      <!-- the first title in the list begins at "1" and goes up -->
+      <TITLE seq="1">The Next Song - To Be Played</TITLE>
+      <TITLE seq="2">The Following Song - Or Not To Be Played</TITLE>
+      ..
+      <!-- XX is the last file returned -->
+      <TITLE seq="XX">The Final Song - That Is The Question</TITLE>
+    </NEXTSONGS>
+  </SHOUTCASTSERVER>
+
+
+
+3.0   Equivalent of 7.html
+--------------------------
+
+In SHOUTcast DNAS v1 servers a 7.html could be accessed to get certain information about
+the current server instance for reporting and other usage. This is no longer provided in
+the SHOUTcast v2 DNAS and has been replaced by an equivalent xml response which provides
+some extra information via the /stats (public) or admin.cgi?mode=viewxml&page=1 (private)
+options.
+
+The following shows the order of and what information was provided by the 7.html response
+against the xml entry name in the /stats or admin.cgi?mode=viewxml&page=1 xml response:
+
+CURRENTLISTENERS STREAMSTATUS PEAKLISTENERS MAXLISTENERS UNIQUELISTENERS BITRATE SONGTITLE

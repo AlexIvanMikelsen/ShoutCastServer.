@@ -1,0 +1,91 @@
+﻿                      Nullsoft SHOUTcast 2.0 System Overview
+                          (Last Updated 05 January 2011)
+
+
+1.0  Overview of the SHOUTcast System
+2.0  Example SHOUTcast System Setups
+2.1    Summary
+
+
+
+1.0   Overview of the SHOUTcast System
+--------------------------------------
+
+The SHOUTcast system is based around a 'client + server' configuration which allows you
+to run a server (either directly or via a hosted service) which can provide a stream or
+streams (if using a v2 server) of the 'source' connected to it to any clients which then
+connect to the server.
+
+The clients connect via a direct connection i.e. server <->> client where the main flow
+of data (the stream data) will go from the server to the client.
+
+The server itself will take a source for the stream which can be from the Transcoder 
+(sc_trans) or Winamp + Source DSP (dsp_sc) or any other program which is able to provide
+the stream data to the server in the required format (depending upon the mode the server
+is being run in). Additionally the source could even be another server which then makes
+our server into a relay server.
+
+Once a source is connected to the server, the server will then allow clients to connect
+to it and so the SHOUTcast system is running. An additional feature provided is the means
+to list the stream in the SHOUTcast Radio Directory (otherwise known as the YP from its
+earlier days which stands for YellowPages) which does as it is named by providing a
+directory listing of streams which makes it easier for any clients to find your stream
+and so be able to listen to it.
+
+Important to note is that the YP will not do anything else other than providing some
+information to the client such as a title, contact information i.e. a website to go to,
+the genre of the stream (used for categorising the stream for easier finding) and so on
+as provided to the YP from the server as well as providing the required url address of
+your stream. This is no more different than placing a link on your own site to the url
+address of your stream, it just happens to be listed in one place which makes it easier
+for clients to find yours and other peoples streams.
+
+
+2.0   Example SHOUTcast System Setups
+-------------------------------------
+
+Based on what we now know about the SHOUTcast system you could have one of the following
+setups of tools to have a working SHOUTcast system.
+
+
+Legend:
+    «~»          -  A query made about the stream i.e. obtaining an url for it.
+    → or ← or ↑  -  A direct connection where the direction of the arrow shows the
+                    direction the connection happens e.g. from a source to the server.
+
+
+Example 1: Source connected to a Server and listing on the YP for client connections
+
+    Winamp + DSP  →  DNAS [sc_serv]  →         YP          «~»   Winamp
+      (Source)          (Server)        (Radio Directory)       (Client)
+                            ↑                                      |
+                             ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+
+
+Example 2: Source connected to a Server with a client using a direct url e.g. via website
+
+    Winamp + DSP  →  DNAS [sc_serv]  ←   Winamp
+      (Source)          (Server)        (Client)
+
+
+Example 3: Source connected to a Server with a client using a direct url
+           Note: This shows how the source can be different but the client will not know.
+
+    Transcoder  →  DNAS [sc_serv]  ←   Winamp
+     (Source)         (Server)        (Client)
+
+
+Example 4: Relaying a Server via your Server and listing on the YP for client connections
+
+    DNAS [sc_serv]  →  DNAS [sc_serv]  →         YP          «~»   Winamp
+       (Source)             (Server)      (Radio Directory)       (Client)
+                                ↑                                     |
+                                 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+
+2.1   Summary
+-------------
+
+As can be seen from these examples there are a number of ways to provide a source to the
+server (not accounting for 3rd party source programs) and for a client to connect to the
+server. In all cases the connection from the client to the server is direct even if the
+stream is listed on the YP and the client 'connects' to the stream via the YP entry.

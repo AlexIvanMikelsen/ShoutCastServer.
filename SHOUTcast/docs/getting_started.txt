@@ -1,0 +1,602 @@
+﻿                       Nullsoft SHOUTcast 2.0 Getting Started Guide
+                               (Last Updated 18 July 2011)
+
+
+1.0     Introduction
+1.1       What is SHOUTcast?
+1.2       Windows Users
+1.3       Windows Vista / 7 Specifics
+2.0     What is Required?
+2.1       Supported Operating Systems
+3.0     Getting Started
+3.1       Download the Correct Version
+3.2       Choose an Install Location
+3.3       Installation
+3.4       Setting Up The Tools
+3.5       Server
+3.5.1       Server Configuration Setup
+3.5.2       Starting the Server
+3.5.3       Errors Running the Server
+3.5.4       Obtaining An Authhash
+3.6       Transcoder
+3.6.1       MP3 Streaming License
+3.6.2       Transcoder Configuration Setup
+3.6.3       Starting the Transcoder
+3.6.4       Errors Running the Transcoder
+3.7       Source DSP
+3.7.1       Install Source DSP
+3.7.2       Configuring the Source DSP
+3.7.3       Starting the Source DSP
+3.8       Completion
+4.0     Further Information
+4.1       Related Documentation
+4.2       Configuration Builder
+5.0     Glossary
+
+
+
+1.0   Introduction
+------------------
+
+The aim of this document is to help guide you through the process of getting a SHOUTcast
+2 system installed and broadcasting so people can connect to it through the SHOUTcast
+Radio Directory and hear the great content you have and want to provide to the world.
+
+
+It is assumed throughout the documentation that you have a basic knowledge of how to use
+the command-line console for the platform you decide to install the tools on i.e. how to
+run and control a program via the command-line console including being able to pass to it
+commands and the sending of signals as is appropriate to the platform being used. Windows
+users see section 1.2.
+
+
+Additionally it is assumed you know how to setup your network connection and router to
+allow your server instance to be visible when broadcasting i.e. being able to open up and
+forward any required ports to allow your server instance to be visible to other machines
+on the internet as well as so the SHOUTcast Radio Directory can see you.
+
+
+This guide will refer you to other places in the documentation provided with the tools by
+showing references to the relevant file and section in the documentation files
+    e.g. dsp_sc.txt - section 3.2.3
+
+These referenced sections generally provide a lot more detail on the option or feature
+such as what would need to be set in the Transcoder configuration to allow for it to work
+with the DNAS Server being setup and so on.
+
+
+1.1   What is SHOUTcast?
+------------------------
+
+If you are new to SHOUTcast then this is probably something you may have already asked or
+you are trying to find out.
+
+At its most basic, the SHOUTcast system is based around a 'client + server' configuration
+which allows you to run a server (either directly or via a hosted service) which can then
+provide a stream or streams of the 'source' connected to the server to any clients which
+are connected to the server.
+
+The clients connect via a direct connection i.e. server <->> client where the main flow
+of data (the stream data) will go from the server to the client.
+
+
+So a simple SHOUTcast setup would consist of the following:
+
+    Winamp + DSP  →  DNAS [sc_serv]  ←   Winamp
+      (Source)          (Server)        (Client)
+
+This is not the only way to setup a SHOUTcast system and more examples can be seen in the
+shoutcast_system_overview.txt which goes into more detail about the way SHOUTcast works
+as well as other ways of setting up a SHOUTcast system (see section 2.0).
+
+
+1.2   Windows Users
+-------------------
+
+The SHOUTcast DNAS Server and Transcoder are both built to be run from the command-line
+console (or as a native service if using this mode) which may appear to be daunting when
+most interaction done with the operating system is done via a graphical interface (GUI).
+
+If you are not acquainted with using the command-line console then you will need to find
+a guide which shows you the basics of using the command-line console along with getting
+you familiar with using it before trying to get any of the SHOUTcast tools running. If
+you search for 'how to use the command prompt' then you should find a guide which you can
+follow to help get you knowledgeable enough with using the command-line console.
+
+
+This may appear to be a step backwards if you previously used the v1 DNAS Server with its
+very basic GUI wrapper which otherwise was acting in the same manner as the command-line
+console just without the look of the operating system. However the v1 DNAS Server was at
+its core a command-line tool just like the v2 DNAS Server is now.
+
+
+1.3   Windows Vista / 7 Specifics
+---------------------------------
+
+Due to the UAC feature (http://en.wikipedia.org/wiki/User_Account_Control) of these OSes
+you will need to remember the effect that this will have on editing and saving of files.
+
+By default the Windows versions of the installer will choose the native 'Program Files'
+folder (*) but unless you have disabled UAC or do not have full access to the folder then
+you will find attempts to save and edit any configuration files will not work.
+
+If this is an issue then you should either choose a different folder of all of the files
+or change where the tools are trying to save files and also to save any changes in your
+configuration files with a text editor which is running with administrator permissions.
+
+This is an unfortunate inconvenience though for making it easier to known where all of
+the configuration examples and documentation can be found is better. Finally there is no
+reason not to choose a different folder when installing the tools if you experience this.
+
+
+(*) This will be slightly different depending on if you are using the 32-bit or 64-bit
+    version of the OS as well as the language of the OS. As well the installer will pick
+    the native 'Program Files' folder so installing the 32-bit version on the 64-bit OS
+    will use 'Program Files (x86)' whereas installing the 64-bit version on the same OS
+    will use 'Program Files'.
+
+
+
+2.0   What is Required?
+-----------------------
+
+To make your SHOUTcast system you will need the following software tools and hardware:
+
+    * A computer running on a supported operating system (see section 2.1)
+    * SHOUTcast DNAS Server
+    * An input source (Transcoder or Winamp plus Source DSP plug-in)
+    * Media or DJ's or a Capture device i.e. the content you want to provide to people
+
+
+2.1   Supported Operating Systems
+---------------------------------
+
+There are versions of the DNAS Server and Transcoder available on the following operating
+systems:
+
+    Windows 32-bit     Windows 2000, XP, Vista, Windows 7
+    Windows 64-bit     64-bit versions of Windows XP, Vista, Windows 7
+
+    Linux 32-bit
+    Linux 64-bit
+
+    BSD 8.x
+
+    Mac OS X (Intel)   Should work on 10.4.4 and up though is only tested against 10.5.5
+
+Remember to download the version of the tools which fits the operating system of the
+machine you will be installing the tools onto e.g. you could install the 32-bit Windows
+version on Windows 7 64-bit but could not install the 64-bit Windows version on Windows
+XP 32-bit.
+
+If using machines with different operating systems for different tasks then there should
+not be any problems with them working together e.g. Windows for the source and Linux for
+the server. This is due to the tools using the same communication style irrespective of
+the platform which they being run upon. If you do find an incompatibility then report it.
+
+
+
+3.0   Getting Installed
+-----------------------
+
+When following the steps listed remember to only follow the parts which are applicable to
+the operating system and the tool or tools which you are attempting to install. If you do
+want to install multiple tools then it is better to work through the guide for one tool
+and then to do the same for the other one otherwise it may become confusing especially if
+you are new to command-line console tools and manual editting of configuration files.
+
+If you are not happy with manual editting of configuration files then there is also a
+configuration builder included as part of the Server and Transcoder distribution - see
+section 4.2. The aim of the configuration builder is to aid in the creation of matching
+configuration files for both tools which should work. It is still recommended that you do
+read the accompanying documentation so you can understand what it is that you are doing.
+
+
+3.1   Download the Correct Version
+----------------------------------
+
+To begin with you will need to download the correct version of the tools you are going to
+use for the operating system you are setting up your SHOUTcast system on. See section 2.1
+for clarification of the supported operating systems for the tools.
+
+Current versions of the SHOUTcast tools can be obtained from:
+
+    http://www.shoutcast.com/broadcast-tools
+    or
+    http://forums.winamp.com/showthread.php?t=324877 (*)
+
+Remember you will need to download a Server (sc_serv) and a source for the server which
+can be the Transcoder (sc_trans) or if using Windows then you can also use the Source DSP
+plug-in (dsp_sc) for Winamp (which may work on non-Windows systems using WINE but is not
+guaranteed and no support is offered with such a setup).
+
+Additionally there are a number of third party programs which can act as a source for a
+server instance. These are not covered as part of this guide and if you decide you want
+to use one of these programs then you will need to consult their help for getting it to
+work with the server instance.
+
+
+(*) This is a summary page and contains links to the latest versions of the tools such as
+    when a new release has just been released or is being tested before it is  provided
+    via the main SHOUTcast site download page at http://www.shoutcast.com/broadcast-tools
+
+
+3.2   Choose an Install Location
+--------------------------------
+
+Choose an install location for the tool you want to install (be it the Server, Transcoder
+or the source plug-in for Winamp) as is applicable for the SHOUTcast setup you are making
+on the machine.
+
+
+On Windows this choice is handled via the installer which selects a sensible new location
+or it re-uses the previous install location if doing an upgrade of an install which was
+previously made with a v2 tool installer. This can be changed if wanted during install
+and will be needed if you are running on a Windows system with UAC enabled (section 1.3).
+
+On non-Windows operating systems you can choose any location for the extracted location
+as long as you have the correct permission and access to the folder chosen.
+
+
+3.3   Installation
+------------------
+
+On Windows you now need to run the installer, using the folder you have decided upon for
+the install location along with ensuring the option to install the documentation has been
+checked. Doing this will install the documentation and example configuration files which
+are included in the installer and referenced in later stages of this guide.
+
+Note: If using Windows Vista / 7 then make sure to install into a location which allows
+      you to save and edit the configuration files and to save any log files into. More
+      information can be found on what is required in section 1.3.
+
+
+On non-Windows you now need to extract the files for the tool(s) you have downloaded and
+ensure that you extract all contents of the archive into the install location decided on.
+
+
+3.4   Setting Up The Tools
+--------------------------
+
+The following sections are grouped together for what needs to be done in configuring and
+getting ready to start one or more of the officially provided tools. If you are not using
+one or more of them then you can skip the section as appropriate. Remember that you will
+need to have a valid source for use with the DNAS in order to have a listenable stream.
+
+Note: Ensuring the Server is properly configured is the most important thing as unless it
+      is and running then none of the tools will be able to connect to it successfully.
+
+
+3.5   Server
+------------
+
+
+3.5.1   Server Configuration Setup
+----------------------------------
+
+Getting the Server started you first need to open up the sc_serv_simple.conf example file
+in the root of the install location. Work through the file's contents and then fill in or
+change any of the values required for how you want to use the server.
+
+The provided example will create a simple server configuration and contains the basic
+settings needed to allow for the server to work so it will appear in the SHOUTcast lists.
+
+The only thing missing from the example is an authhash which is required for a stream to
+be listed in the SHOUTcast Radio Directory when using the SHOUTcast 2 system. This needs
+to be obtained once the Server is running and a source has correctly connected to it. See
+section 3.5.4 for how to do this one all other stages have been completed.
+
+
+Additionally there are example configuration files for the following scenarios:
+
+    sc_serv_basic   - shows how to get a more multi-stream setup working
+    sc_serv_public  - shows how to make a public server from sc_serv_basic
+    sc_serv_relay   - shows how to relay another source
+
+There is more information about these example configurations in sc_serv2.txt - section 10
+
+
+3.5.2   Starting the Server
+---------------------------
+
+For simplicity we will only run the Server in the command-line console though when your
+Server setup is completed and everything is known to be working correctly then running as
+a service (Windows) or as a daemon (non-Windows) can be done to automate loading of the
+Server.
+
+
+To start the Server instance you now need to enter the correct command string for the
+operating system you are using in the command-line console like the following which
+assumes using the base example configuration file in the same directory as the Server
+program file:
+
+    For Windows     -  sc_serv.exe sc_serv_simple.conf
+    For non-Window  -  ./sc_serv sc_serv_simple.conf
+
+If you use one of the other example configuration files or a different one then you can
+just change 'sc_serv_simple.conf' to the name or full path to the configuration file.
+
+
+For more information on running the Server see sc_serv2.txt and the relevant section for
+the operating system you are using:
+
+    Windows                 -  3.2.3 (or 3.2 for more advanced options)
+    Linux / Mac OS X / BSD  -  3.3.3 (or 3.3 for more advanced options)
+
+
+3.5.3   Errors Running the Server
+---------------------------------
+
+Note: Skip this if you experience no error reports when trying to run the Server.
+
+If an issue is reported in the console output from the Server then you first need to look
+at the actual issue being reported which will be prefixed with an 'E' at the start of the
+message in the console output.
+
+The error message shown should make it clear as to what is wrong e.g. passing an invalid
+or missing configuration file passed would cause an error along with closing the server
+instance.
+
+If the error message still does not make any sense then either double-check sc_serv2.txt
+or goto the SHOUTcast support forums http://forums.winamp.com/forumdisplay.php?f=140 and
+post the question along with a copy of the log including the error message.
+
+
+3.5.4   Obtaining An Authhash
+-----------------------------
+
+With the Server now running, you will need to obtain an authhash for any stream(s) you
+want to be listed in the SHOUTcast Radio Directory. This is done via the 'Administation
+Summary' page  the Server provides as long as a valid source has been connected to the
+Server. See http://wiki.winamp.com/wiki/SHOUTcast_Authhash_Management for how to do this.
+
+
+3.6   Transcoder
+----------------
+
+
+3.6.1   MP3 Streaming License
+-----------------------------
+
+Note: Skip this if you are not setting up the Transcoder for MP3 streaming.
+
+If you want to provide an MP3 stream and are going to use the Transcoder then you will
+need to obtain a license key in-order to unlock the support to do this in the tool.
+Details on how to obtain this can be found in sc_trans.txt - section 2.5.
+
+Note: AAC encoding does not need you to purchase a license as one has already been paid
+      for you as detailed in sc_trans.txt - section 2.5.1.
+
+
+Once the key has been obtained you need to add the key and your name into the
+'unlockkeyname' and 'unlockkeycode' values in you configuration file exactly as they have
+been received. So if your key is '123456' and you have used 'Bob' as the registered name,
+you would add the following to your Transcoder configuration file:
+
+    unlockkeyname=Bob
+    unlockkeycode=123456
+
+
+3.6.2   Transcoder Configuration Setup
+--------------------------------------
+
+Getting the Transcoder started you first need to open up the sc_trans_simple.conf example
+file in the root of the install location. Work through the file's contents and then fill
+in or change any of the values required for how you want to use the server.
+
+If you are wanting to use MP3 encoding then make sure you have followed 'section 3.6.1'
+and entered the required 'unlockkeyname' and 'unlockkeycode' values in you configuration
+file exactly as they have been received. You will be informed when later running the
+Transcoder if there is an issue with the MP3 license details.
+
+
+Additionally there are example configuration files for the following scenarios:
+
+    sc_trans_basic     - shows how to get a basic setup without relying on the Server
+    sc_trans_capture   - shows how to use a capture device
+    sc_trans_dj        - shows how to setup a DJ connection
+    sc_trans_playlist  - shows how to use scheduled playlists
+
+There is more information about these example configurations in sc_trans.txt - section 11
+
+
+3.6.3   Starting the Transcoder
+-------------------------------
+
+For simplicity we will only run the Transcoder in the command-line console though when
+your Transcoder setup is completed and everything is known to be working correctly then
+running as a service (Windows) or as a daemon (non-Windows) can be done to automate
+loading of the Transcoder.
+
+
+To start the Transcoder instance you now need to enter the correct command string for the
+operating system you are using into the command-line console like the following which
+assumes using the base example configuration file in the same directory as the Transcoder
+program file:
+
+    For Windows     -  sc_trans.exe sc_trans_simple.conf
+    For non-Window  -  ./sc_serv sc_trans_simple.conf
+
+If you use one of the other example configuration files or a different one then you can
+just change 'sc_trans_simple.conf' to the name or full path to the configuration file.
+
+
+For more information on running the Transcoder see sc_trans.txt and the relevant section
+for the operating system you are using:
+
+    Windows                 -  2.2.3 (or 2.2 for more advanced options)
+    Linux / Mac OS X / BSD  -  2.3.3 (or 2.3 for more advanced options)
+
+
+3.6.4   Errors Running the Transcoder
+-------------------------------------
+
+Note: Skip this if you experience no error reports when trying to run the Transcoder.
+
+If an issue is reported in the console output from the Server then you first need to look
+at the actual issue being reported which will be prefixed with an 'E' at the start of the
+message in the console output.
+
+The error message shown should make it clear as to what is wrong e.g. passing an invalid
+or missing configuration file passed would cause an error along with closing the server
+instance.
+
+If the error message still does not make any sense then either double-check sc_serv2.txt
+or goto the SHOUTcast support forums http://forums.winamp.com/forumdisplay.php?f=140 and
+post the question along with a copy of the log including the error message.
+
+
+3.7   Source DSP
+----------------
+
+
+3.7.1   Install Source DSP
+--------------------------
+
+Note: Skip this if you are not setting up the Source DSP plug-in for MP3 streaming.
+
+If you want to provide an MP3 stream and are going to use Winamp and the Source DSP then
+you just need to make sure to install the Source DSP plug-in and select the MP3 encoder
+on the 'Output -> Encoder' tab (as detailed in dsp_sc.txt - section 3.2.3).
+
+
+3.7.2   Configuring the Source DSP
+----------------------------------
+
+For getting Winamp and the Source DSP plug-in setup look through the dsp_sc_config.txt
+file and enter in the relevant values as described in it once you have setup
+
+    the Server (from section 3.5.1) if you are going to use the plug-in as the only source
+    and / or
+    the Transcoder (from section 3.6.2) if it is to act as a DJ source
+
+
+3.7.3   Starting the Source DSP
+-------------------------------
+
+Using the Source DSP plug-in requires the plug-in to be set as the current DSP plug-in
+which is done by going to 'Winamp Preferences -> Plug-ins -> DSP/Effect' and selecting
+'Nullsoft SHOUTcast Source DSP <version>' (*) from the plug-in's list.
+
+When this entry in the list is selected then the plug-in's configuration window will be
+opened and from there the plug-in will be in a state where a connection can be started
+via the 'Connect' button on the 'Output' tab.
+
+(*) The string <version> would be the actual version of the plug-in which is installed.
+
+
+3.8   Completion
+----------------
+
+You should now be up and running with a working SHOUTcast system. Happy broadcasting!
+
+If things are still not running then go back over the section(s) relating to the tool(s)
+you are having issues with and make sure that you have followed things otherwise please
+see the next section (4.0) on what you can do to get help in trying to resolve the issues
+you are experiencing.
+
+
+
+4.0   Further Information
+-------------------------
+
+If you have followed the setup steps detailed in section 3 and are still having issues
+with getting the tools running or working together to achieve a certain result then first
+make sure you have the currently supported version of the tool(s) in case it is a bug in
+the tool(s) which has already been fixed. You can check this via the links referenced in
+section 3.1 and especially the forum link of the most current versions available.
+
+
+If installing the latest version does not help or if you already are using the latest
+version of the tool(s) or if the feature is not available then please goto the SHOUTcast
+support forums: http://forums.winamp.com/forumdisplay.php?f=140
+
+Make sure if you are reporting issues to provide as much information as possible for the
+SHOUTcast users who use the tools including the following information:
+
+    * Your SHOUTcast setup including all versions of the tools being used
+    * The issue you are experiencing
+    * The steps needed to reproduce the issue
+    * Anything else useful especially if you have been tinkering with options before the
+      issue appeared
+
+Remember when you post an issue that providing as much information in a clear and concise
+manner will make it easier for anyone who can help to be able to understand the issue you
+have. This is important as not everyone visiting the forum are native English speakers.
+
+Finally you must remain civil to other users (however annoying or frustrating the issue
+is that you are experiencing) as most users will not want to make a reply to someone who
+does not appear to be civil - if you think about it from the other view of what you would
+think when looking at such a post then this should make sense to keep things civil.
+
+
+4.1   Related Documentation
+---------------------------
+
+All documentation can be found online - http://wiki.winamp.com/wiki/SHOUTcast_Broadcaster
+which will contain the documentation for the currently released versions of the tools.
+
+Additionally, in the install location there will be a 'docs' folder (as long as it has
+been chosen to be installed [Windows] or extracted [non-Windows] which contains text only
+versions of the main documentation relating to the SHOUTcast tool(s) installed as well as
+any related documentation to the other tools which may be of use in getting a SHOUTcast
+system configured and running
+e.g. the docs\dsp_sc folder contains information on the Source DSP plug-in so you can use
+     it to setup the plug-in as a source or so you can know what to tell a DJ so they can
+     connect to your SHOUTcast system.
+
+
+Please remember that with the SHOUTcast tools being designed to work on both the Windows
+and non-Windows operating systems, there is information included in the documentation
+which relates to either of these platforms. So when reading through the documentation,
+only follow the information which relates to the operating system you are using
+
+
+4.2   Configuration Builder
+---------------------------
+
+Included in the SHOUTcast DNAS Server and Transcoder installers / archives (depending on
+the operating system you are using) include a Configuration Builder which create a paired
+configuration file for the Server and the Transcoder. This can be found in the folder
+'config_builder'.
+
+This is a very useful tool especially when making a new setup or if you find you are not
+happy with manually editing configuration files. Do remember that this will help to make
+configuration files which will work as long as the details you enter are correct and are
+correctly passed to the Server and Transcoder instances when run.
+
+Due to security issues when running web pages locally on the machine, you may find it is
+easier to use the externally hosted version on of the configuration builder which can be
+found at http://bogproghome.hopto.org/config_builder/config_builder.html (this will use
+the latest version of the configuration builder).
+
+
+
+5.0   Glossary
+--------------
+
+Client - This is a program run which will connect to the Server e.g. Winamp.
+
+DNAS - This is an abbreviation of Distributed Network Audio Server and refers to the way
+       SHOUTcast systems are intended in providing a Stream to multiple Clients.
+
+Server - This is the program which is run on a machine to provide to Clients the Stream.
+
+Source - This is a program or an input device e.g. the line-in connection on the Server
+         which is providing the data for the Stream.
+
+Stream - This is the data which is provided from the Server to the connected Client and
+         is best thought of like the flow of water in a stream in how it goes from the
+         Server (up stream) to the Client (down stream).
+
+Transcoder - This is the software which can take taken different media files and convert
+             them to a different format which is then compatible what the Stream wanted.
+
+YP - This is an abbreviation of YellowPages and refers to the SHOUTcast Radio Directory
+     listing which makes it easier for Clients to search for and then find your Stream.
+
+dsp_sc - This is the name the SHOUTcast Source DSP plug-in is otherwise known as.
+
+sc_trans - This is the name the SHOUTcast Transcoder is otherwise known as.
+
+sc_serv or sc_serv2 - This is the name the SHOUTcast DNAS Server is otherwise known as.

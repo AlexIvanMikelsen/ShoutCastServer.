@@ -1,0 +1,25 @@
+body,table,textarea{font-family:Arial,Helvetica,sans-serif;font-size:9pt;color:#636363;background:white;}
+h1,h2,.title{color:#DEAC2F;padding:3px 0 2px 0;background:none repeat scroll 0 0 #636363;border:1px solid #CCCCCC;border-collapse:collapse;text-align:center;}
+.titlespan{color:#DEAC2F;padding:3px 0 2px 0;background:none repeat scroll 0 0 #F0F0F0;border:1px solid #CCCCCC;border-collapse:collapse;text-align:center;}
+td.ConfigTableDescTD{width:20%;text-align:right;padding-right:20px;white-space:nowrap;}
+a.button:active{background-position:bottom right;color:black;outline:none;}
+a.button:active span{background-position:bottom left;padding:6px 0 4px 18px;}
+textarea{resize:none;background-color:#f0f0f0;color:black;border-width:0}
+span.HelperSpan{overflow:auto;width:100%;border:1px solid;display:block;padding:0px;background-color:#f0f0f0;color:#2E2E2E;font-weight:bold;border-width:1px;border-right-color:#2350A5;border-bottom-color:#2350A5;border-top-color:#2350A5;border-left-color:#2350A5;}
+#HelperSpan a{font-weight:bold;color:#2762AE}
+input,.filesel,select{background-color:#f0f0f0;border:1px solid #CCCCCC;}
+#UploadConfigButton,#AddPlaylistButton,#DJAddButton,#CalendarEventAddButton,input.button{background-color:#2350A5;color:white;}
+#DownloadConfigHelpButton,#DownloadSCServHelpButton,#DownloadSCTransHelpButton,#DownloadCalendarHelpButton,#DownloadDNASLaunchFileHelpButton,#DownloadTransLaunchFileHelpButton{background-color:#2350A5;color:white;width:auto;}
+#ResetButton{padding-top:6px;padding-bottom:6px;background-color:#2350A5;color:white;}
+tr{border-right-color:#2350A5;border-bottom-color:#2350A5;border-top-color:#2350A5;border-left-color:#2350A5;}
+td{white-space:inherit;}
+.outerb{border-width:thin;border-style:outset;border-right-color:#2350A5;border-bottom-color:#2350A5;border-top-color:#2350A5;border-left-color:#2350A5;width:50%;}
+.tableone{width:100%;border-collapse:collapse;margin:0 auto;width:100%;}
+.tabletwo{width:100%;border-collapse:collapse;overflow-x:hidden;}
+.innerb{width:100%;overflow:auto;display:inline-block;}
+body,textarea{scrollbar-highlight-color:white;scrollbar-track-color:white;scrollbar-arrow-color:#2350A5;scrollbar-darkshadow-color:#f0f0f0;}
+.upperb{border-bottom:1px solid #636363;padding-bottom:4px;}
+.upperbs{width:1px;background-color:#636363;padding:0px;}
+a:link,a:visited{color:#2762AE;text-decoration:none;}
+a:hover{text-decoration:underline;}
+.collapse{text-decoration:none;float:right;margin:1px;}

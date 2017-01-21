@@ -1,0 +1,6 @@
+2017-01-10 21:11:39	I	msg:[MAIN] Logger updating log file to use
+2017-01-10 21:11:39	I	msg:[MAIN] Loaded config from sc_serv_basic.conf
+2017-01-10 21:11:39	I	msg:[MAIN] Calculated CPU count is 2
+2017-01-10 21:11:39	I	msg:[MAIN] Starting 2 network threads
+2017-01-10 21:11:39	I	msg:[MICROSERVER] Listening for connection on port 8000
+2017-01-10 21:11:39	I	msg:[MICROSERVER] Listening for connection on port 8001

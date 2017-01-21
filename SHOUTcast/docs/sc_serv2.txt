@@ -1,0 +1,1202 @@
+                    Nullsoft SHOUTcast DNAS Server Version 2 (sc_serv)
+                               (Last Updated 25 July 2011)
+
+
+1.0     Introduction
+2.0     Overview
+3.0     Getting Started
+3.1       Running the Server
+3.2       Windows
+3.2.1       Install as a Service
+3.2.2       Uninstall the Service
+3.2.3       Run as a Non-Service in the Console
+3.3       Linux / Mac OS X / BSD
+3.3.1       Run as a Daemon
+3.3.2       End a Daemon
+3.3.3       Run as a Non-Daemon
+3.4       Additional Signals
+4.0     Configuration File
+4.0.1     Banning
+4.0.2     Client Behaviour
+4.0.3     Debugging
+4.0.4     Flash Security
+4.0.5     Introduction and Backup Files
+4.0.6     Logging
+4.0.7     Miscellaneous
+4.0.8     Networking
+4.0.9     Network Buffers
+4.0.10    Relaying
+4.0.11    Reserved IP (RIP)
+4.0.12    Stream Configuration
+4.0.13    Web Connection (W3C) Logging
+4.0.14    YP Server Behaviour
+5.0     Administration
+5.1       Administration Pages
+5.1.1       Public Pages
+5.1.2       Private Pages
+5.2       XML Responses
+6.0     Stream Addresses
+7.0     Locale Error (Linux / Mac OS X / BSD)
+8.0     Virtual Memory Footprint (Linux / Mac OS X / BSD)
+9.0     Maximum Client Connection Limits
+10.0    Example Configurations
+10.1      sc_serv_basic
+10.2      sc_serv_public
+10.3      sc_serv_relay
+10.4      sc_serv_debug
+10.5      sc_serv_simple
+
+
+
+1.0   Introduction
+------------------
+
+The purpose of this document is to show you the different configuration options supported
+by sc_serv along with basic and more advanced example configurations to enable you to get
+started with using sc_serv and the features it can offer.
+
+The aim of sc_serv is to provide enhanced serving features and also access to the new YP2
+infrastructure whilst maintaining as much backward compatibility with previous versions
+of sc_serv as possible. The new features introduced include:
+
+    1)  Serving multiple streams from a single server instance
+    2)  Relaying multiple streams from a single server instance
+    3)  Multiplexing all server activity through a single IP port
+    4)  SHOUTcast 2 wire protocol support for sources, relays and clients
+    5)  Repackaging of SHOUTcast 1 and SHOUTcast 2 data as needed for connected clients
+    6)  YP2 infrastructure support
+    7)  Real-time metadata and statistic reporting
+    8)  Static station id support
+    9)  In-stream metadata in standardised xml files
+    10) UTF-8 and international character encoding
+    11) Improved server and stream security
+
+
+
+2.0   Overview of Features
+--------------------------
+
+To take full advantage of the newer features provided as part of the SHOUTcast 2 and YP2
+systems then you will need to ensure you are using a compatible version of sc_serv (any
+version 2 will work) and that you have the required authorisation key to register as a
+broadcaster on the YP2 directory (see section 3.0).
+
+If you were intending on taking full advantage of the multiplexing and multiple stream
+support offered as part of sc_serv then you would need to make sure you enable the
+SHOUTcast 2 options (this is enabled by default with server builds from the end of 2010
+if the 'yp2' option in the configuration file is not specified [see section 4.0.14] ).
+
+The reason for needing to enable this support is if you try to do it with the original
+SHOUTcast 1 protocol then it will not work as the original protocol has no means of
+expressing multiple streams from a single port due to the lack of an identifier provided
+for them.
+
+If you are planning on connecting multiple sc_trans instances to sc_serv then you must
+use the SHOUTcast 2 protocol support so that each sc_trans instance can have a unique
+identifier which allows for multiple streams to then be provided from a single server.
+
+It is still possible for an older source to connect to the server with a number of config
+options available to support this though functionality will be limited compared to what
+can be done with a fully supporting SHOUTcast 2 source.
+
+Finally clients connecting to your server do not need to directly support SHOUTcast 2 as
+sc_serv will repackage the stream data and any related metadata into the correct format
+the client requests (typically based on the user agent detected by the server).
+
+
+
+3.0   Getting Started
+---------------------
+
+One of the key aspects of the new YP2 directory infrastructure is an authorisation key
+which is used to validate your server when it tries to connect to the YP2 infrastructure
+for any of the station(s) you run. Once this key is obtained, it will be valid for all
+root servers of the station being broadcast.
+
+This can be done by going to http://wiki.winamp.com/wiki/SHOUTcast_Authhash_Management
+which shows how to do this via the 'Administation Summary' page as long as a valid source
+has been connected to the server. This process automatically updates your configuration
+file(s) with the new authhash and if the stream is set to be public then will attempt to
+get the stream listed in the SHOUTcast Radio Directory.
+
+Note: When using an older SHOUTcast 1 server then you do not need to do this registration
+      and the server will still be able to be listed on the directory but there is not
+      the same level of protection over the stream as is the case with registering it.
+
+
+3.1   Running the Server
+------------------------
+
+The server is able to be run either as a console application or it can be run as service
+(Windows) or daemon (Linux / Mac OS X / BSD). Detailed below is how to get the server
+running on the different operating systems supported by it.
+
+
+3.2   Windows
+-------------
+
+The Windows version of sc_serv is designed to run on fully updated and patched versions
+of Windows 2000, XP, Vista and Windows 7.
+
+Please note that the Windows versions of sc_serv are built with a dependency against the
+Microsoft Visual C++ 2008 SP1 Redistributable Package. If sc_serv is unable to start due
+to a dependency issue then you will need to install the correct version of the package so
+it can run which depends on the version of sc_serv you are attempting to run:
+
+32-bit version:
+http://www.microsoft.com/downloads/en/details.aspx?FamilyID=a5c84275-3b97-4ab7-a40d-3802b2af5fc2
+
+64-bit version:
+http://www.microsoft.com/downloads/en/details.aspx?FamilyID=ba9257ca-337f-4b40-8c14-157cfdffee4e
+
+
+3.2.1   Install as a Service
+----------------------------
+
+sc_serv.exe install <servicename> <username> <password> <conf>
+
+<servicename> - Name of service
+                Note: Typically enter this as 'sc_serv' though you can use a different
+                      name but you will need to remember it as it is required to be the
+                      same when using the 'uninstall' mode.
+
+<username> - User under which to run the service as or '0' for the local system
+
+<password> - Password for user or '0' for the local system or with no password
+
+<conf> - File path to the configuration file
+         Note: If no file / an invalid file is specified then sc_serv will abort loading.
+
+
+Note: When run as a service there is not a good sense of a current working directory so
+      requires all paths in the configuration and playlist files to be fully qualified
+      otherwise lookups will fail when sc_serv is run.
+
+
+To run sc_serv with a configuration file in the same folder as the server as the current
+system user account you would enter into the console:
+
+    sc_serv.exe install sc_serv 0 0 sc_serv.conf
+
+
+3.2.2   Uninstall the Service
+-----------------------------
+
+sc_serv.exe uninstall <servicename>
+
+<servicename> - Name of service as used when the service was registered
+
+
+To uninstall sc_serv assuming it was installed as detailed in the install section above
+then you would enter into the console:
+
+    sc_serv.exe uninstall sc_serv
+
+
+3.2.3   Run as a Non-Service in the Console
+-------------------------------------------
+
+sc_serv.exe <conf>
+
+<conf> - File path to the configuration file (can be relative or absolute)
+         Note: If no file / an invalid file is specified then sc_serv will abort loading.
+
+
+3.3   Linux / Mac OS X / BSD
+----------------------------
+
+Remember to enable the required access on the sc_trans file by doing 'chmod a+x sc_trans'
+after extracting it from the distribution file otherwise the OS is likely to not run it
+and show the error message './sc_serv: Permission denied'.
+
+3.3.1   Run as a Daemon
+-----------------------
+
+./sc_serv daemon <conf>
+
+<conf> - File path to the configuration file (required in all cases)
+         Note: If no file / an invalid file is specified then sc_serv will abort loading.
+
+e.g.
+    ./sc_serv daemon ./sc_serv.conf
+
+When run this should output the following:
+
+'sc_serv going daemon with PID [XXXX]' where XXXX is the <pid> of the process.
+
+
+3.3.2   End a Daemon
+--------------------
+
+kill -SIGTERM <pid>
+or
+kill -15 <pid>
+or
+kill -s TERM <pid>
+
+<pid> - The PID of the daemon instance (reported when the daemon started or can be found
+        with 'ps ax | grep sc_serv' as long as sc_serv was the file run otherwise you can
+        just use 'ps ax' if the filename isn't known). Additionally the PID of sc_serv is
+        listed in the log file.
+
+
+3.3.3   Run as a Non-Daemon
+---------------------------
+
+./sc_serv <conf>
+
+<conf> - File path to the configuration file (can be relative or absolute)
+         Note: If no file / an invalid file is specified then sc_serv will abort loading.
+
+
+3.4   Additional Signals
+------------------------
+
+When run on Linux / Mac OS X / BSD then some additional signals are supported to allow
+for additional control over the running daemon instance of sc_serv.
+
+The following signals can be used with the 'kill' command (in the manner of your choosing
+for using the kill command) along with the <pid> of the daemon instance to do one of the
+following actions:
+
+    SIGKILL   -  Stops sc_trans (also SIGTERM, SIGINT and SIGQUIT will work)
+    SIGHUP    -  Rotates logfile, w3clog and streamw3clog
+
+The result of SIGHUP is that the current log file contents will be moved into <logfile>_1
+e.g. sc_serv_1.log, <logfile>_1 will be moved into <logfile>_2 e.g. sc_serv_2.log and
+so on for all log files which can be found which match the current log file's name. This
+is useful if timed to have it create day specific log files.
+
+
+Note: These signals are not supported by the Windows version of sc_serv which will only
+      respond to the Ctrl + C / Ctrl + Break / console close commands the OS provides.
+
+
+
+4.0   Configuration File
+------------------------
+
+Here you can find a complete list of all of the configuration options which are provided
+by sc_serv which ranges from logging to networking configuration and control over the
+media being used when streaming via the server.
+
+Configuration entries labelled as <MULTI> can be used to set up simultaneous connections
+to the server or allow for multiple connections from various sources. These are specified
+by adding _# to the end of the option's name as shown below where # begins with one. If
+you are only working with a single instance then you do not need to add the _# part as
+any instances of a configuration option will assume it is for _1.
+
+Note: The <MULTI> system is not hierarchical and all values beyond the default must be
+      specified for all connections. So for example, if you wanted to connect to two
+      servers on the same port you must do:
+
+    serverport_1=8080
+    serverport_2=8080
+    serverip_1=www.server1.com
+    serverip_2=www.server2.com
+
+Note that you CANNOT do it like this as it leads to not all values being set:
+
+    serverport=8080
+    serverip_1=www.server1.com
+    serverip_2=www.server2.com
+
+
+The configuration files also allow for notes or options to be disabled by the use of a
+comma (;) at the start of a line which can be seen in all of the configuration examples.
+
+Known options in the configuration files are recognised irrespective of the case they are
+entered in the configuration file so maxuser and MaXuSer will be handled the same way.
+
+Any items found in the configuration file which are not known (as detailed in following
+sections) or is not processed as a comment will be reported in the following manner:
+
+    <date + time> W msg:[CONFIG] Invalid item on line XX
+
+    where <date + time> is the date and time the event happens at and XX is the line in
+    the configuration file where the error has been found to occur at.
+
+
+4.0.1   Banning
+---------------
+
+banfile : File to store the list of banned IP addresses    [Default = sc_serv.ban]
+savebanlistonexit : Re-write the 'banfile' on server exit    [Default = 1]
+
+Note: If you are using a folder for saving the file into then you need to ensure that the
+      folder already exists as sc_serv will not attempt to the create the folder for you.
+
+
+4.0.2   Client Behaviour
+------------------------
+
+maxuser : Specify the maximum number of clients allowed to connect to the server
+          [Default = 32]
+          Note: This is used in conjunction with 'streammaxuser' (see section 4.0.12) to
+                control the maximum limit on the number of client connections allowed to
+                connect to the server instance.
+
+listenertime : Specify the maximum time in minutes a client can listen to the stream
+               [Default = 0]
+               Note: A value of zero means there will be no time limit.
+autodumpusers : Enable to allow the server to disconnect clients if the source
+                disconnects    [Default = 0]
+
+srcip : Specify the server side binding address for sources to connect on
+        [Default = <no value>]
+dstip or destip : Specify the server side binding address for clients
+                  [Default = <no value>]
+
+Notes:
+------
+
+If 'any' or no value is specified then sc_serv listens to all addresses.
+
+If you specify a value for 'dstip / destip' then this will be used by the listen feature
+on the Administration Pages (see section 5.1) so it can provide a valid stream url in the
+generated playlist. If 'dstip / destip' is not specified then the server will attempt to
+auto-generate the IP required for the client to be able to connect. If this fails the
+generated playlist is likely to return a stream url like http://0.0.0.0:<portbase>/<path>
+
+The IP provided needs to be in a valid format like http://<my-ip> or an address which can
+be resolved to an IP otherwise the internal lookups done are likely to fail (depends upon
+the server configuration and OS being used).
+
+Also you cannot set srcip and dstip / destip to be the same IP value and if this happens
+then the server will close. Closing of the server will also happen if the IP cannot be
+resolved or correctly bound to i.e. server is not there or an invalid value was entered.
+
+titleformat : Specify a string to be used in-place of the default icy-name string being
+              used    [Default = <no value>]
+urlformat : Specify a string to be used in-place of the default icy-url string being used
+            [Default = <no value>]
+
+
+4.0.3   Debugging
+-----------------
+
+In all cases, the default value is for no debug logging for the options listed below.
+
+yp1debug : Enable debug logging of YP connections
+yp2debug : Enable debug logging of YP2 connections
+shoutcastsourcedebug : Enable debug logging of SHOUTcast source connections
+uvox2sourcedebug : Enable debug logging of SHOUTcast 2 source connections
+shoutcast1clientdebug : Enable debug logging of SHOUTcast streaming clients
+shoutcast2clientdebug : Enable debug logging of SHOUTcast 2 streaming clients
+relayshoutcastdebug : Enable debug logging for SHOUTcast relays
+relayuvoxdebug : Enable debug logging for SHOUTcast 2 relays
+relaydebug : Enable debug logging of common relay code
+streamdatadebug : Enable debug logging of common streaming code
+httpstyledebug : Enable debug logging of http style requests
+statsdebug : Enable debug logging of statistics
+microserverdebug : Enable debug logging of common server activity
+threadrunnerdebug : Enable debug logging of the thread manager
+rtmpclientdebug : Enable debug logging of rtmp clients
+
+
+4.0.4   Flash Security
+----------------------
+
+flashpolicyfile : Name of file containing flash crossdomain policies on the server
+                  [Default = crossdomain.xml]
+
+
+4.0.5   Introduction and Backup Files
+-------------------------------------
+
+introfile : File to play when a client first connects to the server
+            [Default = <no value>]
+backupfile : File to play if the source disconnects from the server
+             [Default = <no value>]
+specialfiletmpdir : place to store intro and backup files uploaded by sc_trans
+                    [Default = /tmp/ (*nix only)]
+maxspecialfilesize : Change the maximum size in bytes of the backup and intro files
+                     [Default = 30000000]
+
+
+4.0.6   Logging
+---------------
+
+log : Enable logging of the servers output    [Default = 1]
+screenlog :  Enable logging of servers output to the console    [Default = 1]
+             Note: If log=0 then this option is ignored due to no logging happening.
+logfile : Specify a different logfile to save the logs into
+          [Default = %temp%\sc_serv.log or /tmp/sc_serv.log]
+logclients : Enable logging of details about client connections and disconnections made
+             [Default = 1]
+
+Note: If you are using a folder for saving the logs into then you need to ensure that the
+      folder already exists as sc_serv will not attempt to the create the folder for you.
+
+
+4.0.7   Miscellaneous
+---------------------
+
+configrewrite :  Re-write the 'config file' on server exit    [Default = 0]
+songhistory : Specify the maximum song history to preserve    [Default = 10]
+cpucount : Specify the number of cpu's present instead of the calculated number if
+           non-zero    [Default = 0]
+
+unique : Specify a substitution string for the '$' character to be used when processing
+         filenames which if specified will set any occurences of '$' to the value set.
+         This will be used in the processing of the following filenames:
+
+           logfile, introfile, backupfile, banfile, ripfile, include, contentdir, w3clog,
+           streamintrofile, streambackupfile, streambanfile, streamripfile, streamw3clog
+
+         So when 'unique' is changed from '$' to say 'test' then the following happens if
+         'logfile' is set to '/usr/local/shoutcast/$.log' then this would be converted to
+         '/usr/local/shoutcast/test.log'
+
+include : Specify an additional include file containing settings to be processed from the
+          current point in the main configuration file    [Default = <no value>]
+
+    Note: You can do multiple calls of this allowing for a basic configuration file with
+          then 'specific' stream configurations set in individual conf files though you
+          need to ensure not to include a reference to the same file in itself.
+
+          You can also specify a path with a wildcard for sc_serv to use to find multiple
+          configuration files to include e.g. 'include=stream/*.conf'.  This can then be
+          used along with the multiple stream configurations (see section 4.0.12) and the
+          admin command 'admin.cgi?mode=reload' (see section 5.1) to add / remove /
+          update stream configurations without having to close the server to apply them.
+
+admincssfile : Specify the css styling to be used on the index.html and admin pages
+               [Default = v2]
+               This can accept the following parameters:
+
+                 admincssfile=v1  -  Uses the v1 DNAS style
+                 admincssfile=v2  -  Uses the newer SHOUTcast 2 style
+                 admincssfile=path_to_local_css_file  e.g. my_index.css
+
+               Note: If using a custom css file, if it does not exist on the first try to
+                     load it the server will revert to the default css style. As well the
+                     style is cached once loaded so changes require a restart of sc_serv.
+
+faviconfile : Specify the file to be returned as the favicon.ico when the administration
+              pages are being queried by the client's browser    [Default = <no value>]
+              The default behaviour is to use a SHOUTcast themed built-in icon file and
+              support / handling the update of this will entirely depend on the browser.
+
+faviconmimetype : Specify the mime type for actual file to be served in the favicon.ico
+                  response    [Default = image/x-icon]
+                  Ensure this is correct for the type of image being used so it is valid.
+
+hidestats : Specify if the publically accessible stats?sid=# page can be accessed or if
+            it is only available via the private administration pages   [Default = 0]
+
+robotstxtfile : Specify the file to be returned as the robots.txt when queried by search
+                engines, etc to attempt to prevent incorrect access to the server's pages
+                which may cause invalid client connections    [Default = <no value>]
+                The default behaviour is to return a robots.txt reponse indicating not to
+                look at any of the server's pages i.e.
+                    User-agent:*
+                    Disallow:/
+
+
+4.0.8   Networking
+------------------
+
+namelookups : Enable to allow reverse DNS look-ups on incoming IP addresses
+              [Default = 0]
+
+portbase : Specify the port which clients and sources need to use to connect to the
+           server    [Default = 8000]
+           Note: SHOUTcast 1 sources are only able to connect to 'portbase + 1'.
+
+autodumpsourcetime : Specify how long before an idle source is dumped from the server
+                     (in seconds)    [Default: 30]
+               Note: A value of zero means there is no timeout of an idle source. Also if
+                     you set this too low then it is likely that valid sources will fail
+                     to connect during the initial stages of a source connection.
+
+maxheaderlinesize : Specify the maximum size of an HTTP header line    [Default = 2048]
+maxheaderlinecount : Specify the maximum header lines in an HTTP style exchange
+                     [Default = 100]
+
+adminpassword : Specify the administrator password for accessing the remote server
+                features    [Default = <no value>]
+password : Specify the password for broadcasters when connecting to the server
+           [Default = <no value>]
+           Note: This matches the 'uvoxauth' value in the sc_trans configuration file
+                 (see sc_trans.txt - section 3.0.11).
+
+
+4.0.9   Network Buffers
+-----------------------
+
+buffertype : Specify whether the buffer size is fixed [0] or adaptive [1]    [Default = 0]
+adaptivebuffersize : Specify the buffer size in seconds if buffer is set to adaptive
+                     [Default = 1]
+fixedbuffersize : Specify the buffer size in bytes if the buffer is set to fixed
+                  [Default = 1048576]
+bufferhardlimit : Specify the maximum buffer size in bytes which it can never go above
+                  [Default = 16777216]
+
+
+4.0.10   Relaying
+-----------------
+
+allowrelay : Enable to allow a relay to connect to the server    [Default = 1]
+allowpublicrelay : Enable to allow relays to list themselves in the YP directory
+                   [Default = 1]
+relayreconnecttime : Specify how many seconds to wait to reconnect on a relay failure
+                     [Default = 30]
+               Note: Setting this to 0 will disable attempts for the relay to reconnect.
+relayconnectretries : Specify the number of times relays are attempted to be connected to
+                      if it is initially unable to connect    [Default = 3]
+               Note: This generally applies only to YP1 connections and is related to the
+                     actual attempts to make and get a http response from the YP server.
+maxhttpredirects : Specify the maximum number of times we can redirect when relaying
+                   [Default = 5]
+
+<Legacy Options>
+relayport : Port of the source to use for the relay    [Default: 80]
+relayserver : Url of the source to relay    [Default = <no value>]
+
+Note: Using the stream configuration options (see section 4.0.12) is the preferred method
+      of setting up a relay. These options are only provided as a means for loading
+      legacy configuration files. If found then these are mapped to 'streamrelayurl_1'.
+
+
+4.0.11   Reserved IP (RIP)
+--------------------------
+
+ripfile : File to store the list of reserved IP addresses    [Default = sc_serv.rip]
+saveriplistonexit : Re-write the 'ripfile' on server exit    [Default = 1]
+riponly : Only allow connections to be made from reserved IP addresses    [Default = 0]
+
+Note: If you are using a folder for saving the file into then you need to ensure that the
+      folder already exists as sc_serv will not attempt to the create the folder for you.
+
+
+4.0.12   Stream Configuration
+-----------------------------
+
+Important Note: If you do not specify an identifier (_#) on the end of the above options
+                then it will be treated like _1 (effectively acting like SHOUTcast 1).
+                Additionally, _0 is not a supported identifier and will be mapped to _1.
+
+requirestreamconfigs : Only allow sources to connect if a stream configuration has been
+                       set in our configuration file    [Default = 0]
+                       Note: With this enabled, you will need to ensure that any sources
+                             have their configuration details setup to match those in
+                             sc_trans's configuration, in particular the 'uvoxstreamid'
+                             value with sc_trans (see sc_trans.txt - section 3.0.11).
+
+<MULTI> (one set for each stream configuration):
+
+streamid : Specify the numerical identifier of the stream for control or referencing the
+           stream configuration. This can only be a numeric value from 1 to 2147483647.
+
+           If you use multiple stream configurations then you will need to ensure the _X
+           part is specified and correct for each stream configuration group
+           e.g.
+               streamid=1
+               streampath=random
+                 or
+               streamid_1=1
+               streampath_1=random_stream_path
+               streamid_2=2
+               streampath_2=another_stream_path
+
+streamauthhash : The authorisation key needed for YP2 directory registration.
+                 Note: This is a requirement for using the YP2 system and without it you
+                       will not be able to successfully connect to the YP2 directory (see
+                       section 3.0).
+
+                       This can be used for multiple streams you are providing or can be
+                       different (as long as valid) so you can infact provide multiple
+                       stations from the same server if desired.
+
+streampath : Specify the path clients need to use to access the stream
+       Note: If a / is not specified on the start of the string then the server will add
+             it to the generated path in playlist entries or other places as required so
+             http://<serverurl>/<streampath> will work so clients are able to connect.
+
+             If this is not specified then http://<serverurl>/stream/<streamid>/ will be
+             used for client access and in generated playlist entries so that it will
+             always be possible for clients to connect to the server somehow. See section
+             6.0 for more information on the server's stream address support.
+
+streamrelayurl : Specify the full url of source to relay (if this is a relay).
+           Note: Make sure if you use this that the full url is entered and that it is
+                 the url which clients would connect to for the stream to be relayed.
+
+streammaxuser : Specify the maximum number of clients allowed to connect to the stream
+                [Default = 0]
+          Note: If set to zero, not specified or higher than 'maxuser' then the value set
+                for 'maxuser' (see section 4.0.2) will be used for all knwon streams.
+
+                Changing this to a value between zero and 'maxuser' will enforce the user
+                connection limit for the specified value in the stream configuration e.g.
+
+                    streammaxuser_1 = 8
+                    maxuser = 32
+
+                This allows a total of 32 connections to the server but specifies the
+                maximum number of connections to the first stream configuration is 8.
+
+                With the following stream configuration
+
+                    streammaxuser_1 = 64
+                    maxuser = 32
+
+                This allows a total of 32 connections to the server but with a per stream
+                limit above the maximum means the maximum number of connections to the
+                first stream group will be 32. However this also depends upon any other
+                stream configurations and their limits as to whether 32 clients will be
+                able to connect to this stream configuration.
+
+                Finally unless a valid stream configuration is specified then this value
+                will only be applied to the first stream configuration found i.e. there
+                is a need to specify a streamid_XXX for streammaxuser_XXX (where XXX is
+                the stream identifier of the stream configuration group.
+
+streamadminpassword : Specify the administrator password for accessing the remote server
+                      features for the specified stream configuration group. If this is
+                      not specified then 'adminpassword' will be used.
+
+streampassword : Specify the password for broadcasters when connecting to the server for
+                 the specified stream configuration group. If this is not specified then
+                 'password' will be used.
+           Note: This matches the 'uvoxauth' value in the sc_trans configuration file
+                 (see sc_trans.txt - section 3.0.11).
+
+streampublicserver : This allows you to override the public flag received from the source
+                     when a connection is being made to the YP directory. If this is not
+                     specified or is set to empty then 'publicserver' will be used.
+
+streamallowrelay : Enable to allow a relay to connect to the server. If this is not
+                   specified then 'allowrelay' will be used.
+
+streamallowpublicrelay : Enable to allow relays to list themselves in the YP directory.
+                         If this is not specified then 'allowpublicrelay' will be used.
+
+streamriponly : Enable to only allow connections to be made from reserved IP addresses.
+                If this is not specified then 'riponly' will be used.
+
+streamautodumpsourcetime : Specify how long before an idle source will be dumped from the
+                           server (in seconds). A value of zero means there is no timeout
+                           of an idle source. If not specified then 'autodumpsourcetime'
+                           will be used.
+
+streamautodumpusers : Enable to allow the server to disconnect clients if the source
+                      disconnects. If not specified then 'autodumpusers' will be used.
+
+streamlistenertime : Specify the maximum time in minutes a client is allowed to listen to
+                     the stream. A value of zero means there will be no time limit. If
+                     not specified then 'listenertime' will be used.
+
+streamintrofile : File to play when a client first connects to the server. If this is not
+                  specified then 'introfile' will be used.
+
+streambackupfile : File to play if the source disconnects from the server. If this is not
+                   specified then 'backupfile' will be used.
+
+streambanfile : File to store the list of banned IP addresses. If this is not specified
+                then 'banfile' will be used.
+
+streamripfile : File to store the list of banned IP addresses. If this is not specified
+                then 'ripfile' will be used.
+
+streamw3clog : File to store the web connections logs into. If this is not specified
+               then 'w3clog' will be used.
+
+
+4.0.13   Web Connection (W3C) Logging
+-------------------------------------
+
+w3cenable : Enable logging of web connections to describe the duration a client has
+            listened to a specific title    [Default = 1]
+w3clog : File to store the web connections logs into    [Default = sc_w3c.log]
+
+Note: If you are using a folder for saving the log into then you need to ensure that the
+      folder already exists as sc_serv will not attempt to the create the folder for you.
+
+webclientdebug : Enable logging of web client connections    [Default = 0]
+
+
+4.0.14   YP Server Behaviour
+----------------------------
+
+uvoxcipherkey : Specify the key used to obfuscate the initial handshaking with the source
+                [Default = foobar]
+                Note: This is a SHOUTcast 2 only feature and it matches the 'djcipher'
+                      value in the sc_trans configuration file (see sc_trans.txt -
+                      section 3.0.3).
+
+                      Only change this if you really need to do so as not all SHOUTcast 2
+                      clients will allow you to edit this value from the default value.
+                      If using the Source DSP plug-in then see dsp_sc.txt - section 5.0
+                      for details on how to change the plug-in to use a differnet value.
+
+metainterval : Specify the metadata transmission interval in bytes    [Default = 8192]
+               Note: YP1 only
+
+yp2 : Enable to use the SHOUTcast 2 protocol and related server features for access to
+      the YP2 directory    [Default = 1]
+      Note: If this is enabled and not all of the required values are set then the server
+            will throw an error and will abort from its start-up attempt. It should be
+            indicated what needs to be set to allow the server to start with this set.
+
+            Additionally if there is an issue then the server will report an error in its
+            log ouput of 'Connection attempt failed. YP2 error code is XXX (<message>)'
+            where XXX is one of the following error codes and <message> is a message set
+            in the error response to indicate a bit more what the error relates to.
+
+                400    Generic error (covers all other cases usually from internal failures)
+                470    Invalid authorization hash
+                471    Invalid stream type (could be a bad bitrate or mime type)
+                472    Missing or invalid stream url
+                473    Server unreachable by YP
+                474    Relay url does not exist
+                475    Invalid server ID
+                476    Invalid max clients (value out of range or missing)
+                477    Terms of Service violator.  You are being reported.
+                478    Incompatible protocol.
+                479    Streams requiring authorization are not public and cannot list here.
+                480    Cannot see your station/computer (URL: <streamurl>) from the
+                       Internet, disable Internet Sharing/NAT/firewall/ISP cache.
+                481    Cannot verify server since all listener slots are full.  Please wait.
+                482    This network has been permanently banned due to a previous
+                       violation of the SHOUTcast directory terms of service
+                483    Invalid listeners (value out of range / missing)
+                484    Invalid avglistentime (value out of range / missing)
+                485    Invalid newsessions (value out of range / missing)
+                486    Invalid connects (value out of range / missing)
+                487    Request & Response objects are null
+                488    Request xml is null
+                489    YP command not specified
+                490    Generic error, while doing xml parsing
+                491    Generic error, while reading xml request
+                492    Error closing buffer / HTTP connection
+                493    Internal error - unable to acquire data source
+                494    Error updating station information
+
+
+ypaddr : Allows you to specify a different YP server if required
+         [Default = yp.shoutcast.com]
+
+ypport : Allows you to specify the port of the YP server if required    [Default = 80]
+
+yppath : Allows you to specify the path to YP2 services on the server    [Default = /yp2]
+
+yptimeout : Specify the timeout interval in seconds for requests made to the YP server
+            [Default = 60]
+
+ypmaxretries : Specify the maximum number of times a YP request will be attempted
+               [Default = 10]
+               Note: This generally applies only to YP1 connections and is related to the
+                     actual attempts to make and get a http response from the YP server.
+
+ypreportinterval : Specify the maximum time in which the YP must have contacted our
+                   server in seconds    [Default = 300]
+
+ypminreportinterval : Specify the minimum time in which the YP can contact our server in
+                      seconds    [Default = 10]
+
+publicserver : This allows you to override the public flag from the connected source when
+               a connection is being made to the YP directory    [Default = default]
+               This can be one of the following values:
+
+                   default - use the flag provided by the source
+                   always - force the source to be public
+                   never - never allow the use the flag provided by the source
+
+         Note: When using sc_trans this would match with the 'public' value
+               (see sc_trans.txt - section 3.0.8).
+
+
+
+5.0   Administration
+--------------------
+
+With sc_serv there are administration pages available for accessing and controlling the
+server remotely which allows you to monitor and control clients connected to the stream
+(or not if banning them).
+
+These pages can now be accessed through a summary page at /index.html which will show a
+link to any active stream(s) or you explicitly access them via the /index.html?sid=# path
+where # is the ID of the stream (see section 4.0.12 for more about using 'streamid') e.g.
+
+    <streamurl>/index.html?sid=1
+
+If no sid or an invalid sid is passed then you will be taken to the summary /index.html
+and this will be applied even if you were on a page with a known ID and then enter an
+invalid sid or remove it purposefully.
+
+
+5.1   Administration Pages
+--------------------------
+
+As part of the administrative features provided there are the following pages where # is
+the streamid you want to use). This is not a complete list but should cover all of the
+pages which allow for a direct http url to be entered to get an administation action to
+work. The ban and reserve IP actions require input fields and do not map to direct sends.
+
+5.1.1   Public Pages
+--------------------
+
+  index.html    Shows a summary page with links to get to any active stream(s)
+
+  currentsong?sid=#    Returns the current song title or a null response
+  nextsong?sid=#       Returns the next song title (if known) or a null response
+  Note: currentsong and nextsong both provide a UTF-8 encoded string of the song title,
+        otherwise it will return effectively no response (ignoring the http header).
+
+  nextsongs?sid=#      Returns in an xml format the next song title(s) (if known) to be
+                       played when using a compatible v2 stream source. See section 5.2
+                       for more details on the format of the xml returned).
+
+  index.html?sid=#     Shows current status of the specified stream
+  played.html?sid=#    Song history of specified playing history
+  or played?sid=#
+
+  listen.pls?sid=#     Provides a PLS file for clients to use to connect to the stream.
+  or listen?sid=#
+  listen.m3u?sid=#     Provides a M3U file for clients to use to connect to the stream.
+  listen.asx?sid=#     Provides a ASX file for clients to use to connect to the stream.
+
+Note: With the listen pages you either need to have specified an IP with 'dstip / destip'
+      (see section 4.0.2) or leave empty and allow the server to attempt to auto-generate
+      the IP required for the client to be able to connect. If this fails the generated
+      playlist is likely to return a stream url like http://0.0.0.0:<portbase>/<path>
+
+  home.html?sid=#      Opens in a new window or tab (depending on the client browser) the
+  or home?sid=#        'streamurl' as specified by the stream source. If this is not set
+                       then the client will be redirected to the shoutcast.com main page.
+
+  stats?sid=#    Provides an xml response for public accessibility which matches the
+                 private version from admin.cgi?sid=#&mode=viewxml&page=1. This is the
+                 modern version of the 7.html page as provided by the legacy v1 servers.
+                 See section 5.2 for information on what is provided in the xml response.
+
+
+5.1.2   Private Pages
+---------------------
+
+Note: By passing &pass=password where password is the 'adminpassword' (see section 4.0.8)
+      then it is possible to directly access the administration page(s) required. As well
+      the base64 encoded version of the password can be passed as long as it is prefixed
+      with YWRtaW46 e.g.&pass=changeme is the same as &pass=YWRtaW46Y2hhbmdlbWU=
+
+  admin.cgi          Shows the an overal summary admin page for the streams provided by
+  or                 the server including direct links to certain information pages (see
+  admin.cgi?sid=0    notes about the admin.cgi?sid=#&mode=viewxml command for more info)
+
+  admin.cgi?sid=#      Shows the base admin page for the stream and information
+
+  admin.cgi?sid=#&mode=updinfo&song=title           If 'title' is not empty then it will
+  or                                                be set as the current song title for
+  admin.cgi?sid=#&mode=updinfo&type=xml&song=xml    the stream specified until the next
+                                                    use of this action or the next title
+                                                    update is received from the source.
+                                         Specifying '&type=xml' will process the value of
+                                         'song' as v2 XML metadata instead of a v1 title.
+
+  admin.cgi?sid=#&mode=viewlog    View logfile
+  admin.cgi?sid=#&mode=viewlog&viewlog=tail    View logfile (tailing)
+
+  Notes: The tailing option keeps adding additional log entries to the end of the view
+         whilst the view is active. As well any html or xml data in the log will not be
+         shown correctly in the view as < > & are not escaped to their html entities. See
+         section 4.0.6 for more information on the log file.
+
+  admin.cgi?sid=#&mode=viewban    Ban view which matches the ban file and allows you to
+                                  ban a single IP or an IP range from it (see section
+                                  4.0.1 for more info on the file)
+
+  admin.cgi?sid=#&mode=viewrip    Reserved IP list that matches the rip file (see section
+                                  4.0.11 for more info on the file)
+
+  admin.cgi?sid=#&mode=art    Displays the artwork SHOUTcast v2 compatible clients may be
+  or                          able to display if the SHOUTcast v2 source does provide it.
+  admin.cgi?sid=#&mode=art&art=playing
+
+  Notes: The artwork mode is primarily intended as a debugging option to make it possible
+         to see what (if anything) has been provided by the SHOUTcast v2 source.
+
+         If no '&art=' is specified or not a matching option then the stream artwork (if
+         available) will be shown. If no '&art=playing' is specified then this will show
+         the playing file's artwork (if available).
+
+  admin.cgi?sid=#&mode=viewxml    Returns an xml output of the current stream information
+  or
+  admin.cgi?sid=#&mode=viewxml&page=#
+
+  Notes: If page is not set or is zero or greater than 6 then this will output all of the
+         information as the standard viewxml action does. Otherwise this will only show
+         information depending on the number set for page which can be from 1 to 6 which
+         maps to the following:
+
+         If page is not set or is outside of the range zero to 6 then this will output
+         all of the information as the standard viewxml action does. Otherwise this only
+         display information depending on the value assigned to page which can be from 1
+         to 6 which maps as follows:
+
+            1 - Server Summary (this is the same as using the public stats?sid=# action)
+            2 - Not used (previously used for Webdata Stats but not in current builds)
+            3 - Listener Stats
+            4 - Song History
+            5 - Stream Metadata  (if supported by the source otherwise can just be title)
+            6 - Stream Configurations  (displays all of the known stream configurations
+                                        though this is only available on admin.cgi)
+
+         If accessing the standard viewxml or the listener stats (page = 3), you can also
+         send &iponly=1 which will filter the listener information (if there are any) to
+         just output the IP instead of the additional information provided normally.
+
+  admin.cgi?sid=#&mode=resetxml   Will flush the held stream information to refresh it.
+
+  admin.cgi?sid=#&mode=kicksrc    Will allow you to kick the currently connected source
+                                  for the specified stream.
+
+  admin.cgi?sid=#&mode=unripdst&ripdst=<IP>    Where <IP> is the IP to reserve (see
+                                               section 4.0.11 for more information).
+
+  admin.cgi?sid=#&mode=unbandst&bandst=<IP>.0&banmsk=0    Where <IP> is the first 3 parts
+                                                          of a subnet IP to unban.
+  admin.cgi?sid=#&mode=unbandst&bandst=<IP>&banmsk=255    Where <IP> is that of a single
+                                                          IP to unban.
+
+  admin.cgi?mode=rotate                  This will rotate the log files set via the 
+  or                                     'logfile', 'w3clog' and 'streamw3clog' options.
+  admin.cgi?mode=rotate&files=log|w3c    If &files is specified then passing log or w3c
+                                         will allow you to only rotate one type of file
+                                         otherwise both will be rotated by this command.
+
+  admin.cgi?mode=reload            This reloads the stream configuration details in the
+  or                               main configuration file the server used when started
+  admin.cgi?mode=reload&force=1    and is only available on the admin summary page and so
+                                   can only be run by the master administrator password.
+
+  Note: This command works on the server as a whole (hence no sid parameter) and it will
+        add or remove or update any stream configuration as applicable which will cause
+        any connected sources and clients to be kicked as applicable (usually if a stream
+        configuration was removed).
+
+        This will recognise any configurations included via 'include' entries so you can
+        have 'include=stream/*.conf' in your main configuration file which the server can
+        then use to detect different stream configurations.
+
+        If '&force=1' is passed then the reload will treat the updating of active stream
+        configurations in the same manner as a stream configuration removal instead of
+        trying to update compatible stream configuration details without resetting the
+        stream e.g. not increasing the 'streammaxuser' when it could be increased.
+
+        The following configuration options are updated when using this command:
+
+            password or streampassword (*)            streamadminpassword (#)
+            requirestreamconfigs                      streamid
+            streamauthhash                            streampath
+            streamrelayurl                            streammaxuser
+            streampublicserver                        streamallowrelay
+            streamallowpublicrelay                    streamriponly
+            streamautodumpsourcetime                  streamautodumpusers
+            streamlistenertime                        streamintrofile
+            streambackupfile                          streambanfile
+            streamripfile
+
+        (*) This will depend upon the current values versus the new configuration values
+        (#) The master 'adminpassword' can only be changed after a restart of the server
+
+
+5.2   XML Responses
+-------------------
+
+As detailed in the previous sections, some of the administration actions will provide the
+information in an xml response. For information on what is actually returned in these xml
+responses see sc_serv2_xml_responses.txt.
+
+
+
+6.0   Stream Addresses
+----------------------
+
+Clients connecting to the streams provided by sc_serv are able to so in a number of ways
+depending upon how the streams have been configured and also depending upon the number of
+streams you have available.
+
+The two main ways for a client to connect to a stream are as follows:
+
+  <serverurl>/stream/<streamid>/
+    or
+  <serverurl>/<streampath>
+
+  <serverurl> is typically formed as http://dstip:portbase (see sections 4.0.2 and 4.0.8)
+  <streamid> is the 'streampath' set from the stream configuration (see section 4.0.12)
+  <streampath> is the 'streampath' set from the stream configuration (see section 4.0.12)
+
+
+If the client attempting to connect to the server instance does not specify <streampath>
+or <streamid> in the stream url it attempts to access or if only one stream is provided
+then the server will usually default to the first stream it knows about and will allow
+the client to make a valid connection (though this is not guaranteed to happen).
+
+
+This handling of the stream addresses provided is something to keep in mind especially if
+you are providing multiple streams as this will allow you to provide different addresses
+for certain clients to be able to use a specific stream
+e.g.
+    if you wanted to have mobile clients connect to a lower bandwidth stream then you
+    could direct them to '<serverurl>/mobile'
+
+The server options available for controlling how the stream's path is specified can be
+seen in section 4.0.12 which also details the equivalent values needing to be set in the
+sc_trans configuration if you use sc_trans to provide a source to sc_serv.
+
+
+
+7.0   Locale Error (Linux / Mac OS X / BSD)
+-------------------------------------------
+
+If you receive the following error then you have a locale related issues:
+
+    terminate called after throwing an instance of 'std::runtime_error'
+    what():  locale::facet::_S_create_c_locale name not valid
+    Abort trap
+
+If this happens then you need to set the 'POSIX' locale in your terminal's environment
+values. If this does not happen then everything is fine or you are using a newer version
+of sc_serv from the end of 2010 which should no longer exhibit this issue.
+
+Linux:
+    export LC_ALL=POSIX
+
+BSD:
+    setenv LC_ALL POSIX
+
+Mac OS X:
+    export LC_ALL=POSIX
+
+You can test to see if this has worked by checking the shell command "locale":
+
+    LANG=
+    LC_COLLATE="POSIX"
+    LC_CTYPE="POSIX"
+    LC_MESSAGES="POSIX"
+    LC_MONETARY="POSIX"
+    LC_NUMERIC="POSIX"
+    LC_TIME="POSIX"
+    LC_ALL="POSIX"
+
+
+
+8.0   Virtual Memory Footprint (Linux / Mac OS X / BSD)
+-------------------------------------------------------
+
+Due to how sc_serv works it will create a large number of threads which may become an
+issue due to the default virtual memory stack allocation per thread potentially being
+large (typically 10MB per thread). For most people this should not be an issue as the
+memory is not really allocated unless it is used. If however if you have a resource
+constrained system or if you plan on running many copies of sc_trans then you could
+potentially run out of virtual memory.
+
+The default thread allocation can be reduced by issuing a "ulimit" command before running
+sc_trans and in the example reduces it to 512KB per-thread
+e.g.
+    ulimit -s 512
+
+
+
+9.0   Maximum Client Connection Limits
+--------------------------------------
+
+In general, there are inherent limits on the maximum number of client connections which
+may be made to a running instances of sc_serv which can either be set by configuration
+limits e.g. 'maxuser', Operating System limits or bandwidth limits being reached.
+
+The first two are easy to resolve whereas the last (bandwidth limits) is something which
+will usually require obtaining additional hosting or paying for more available bandwidth.
+
+If reaching the Operating System limit, this is usually indicated by the maximum number
+of clients never going above a fixed value even if there is the bandwidth and the server
+has been configured to go higher. This usually appears as around 1016 maximum connections
+(though this can vary a bit)
+
+If using a non-Windows Operating System then you can use the 'ulimit -n xxxx' command to
+change the upper limit from what is already set which can be found from just 'ulimit -n'
+e.g. to change the limit to 4096 connections you would run
+    ulimit -n 4096
+
+If using a Windows Operating System then there isn't any real way to change such things
+due to the OS hopefully being configured with limits that will not be reached when using
+sc_serv. If in doubt then consult the Microsoft support documentation for the OS used.
+
+
+
+10.0   Example Configurations
+-----------------------------
+
+Include as part of the sc_serv installation are a number of example configurations to get
+things started with using some of the features of the server. The provided examples are:
+
+    sc_serv_basic.conf
+    sc_serv_public.conf
+    sc_serv_relay.conf
+    sc_serv_simple.conf
+
+All of the configuration examples are documented and will relate back to details in this
+file appropriately. You will need to change some details in these example files or to
+obtain any applicable authorisation keys for the setup you are making (see section 3.0).
+
+In all cases the examples are designed to work from the same install folder as sc_serv.
+
+
+Remember these examples are a way to get you up and running faster though you are still
+likely to have to adjust things depending upon the systems you are using and how you want
+to manage your sources and server connections which are covered in previous sections.
+
+Additionally if you are not happy with editing the files or find it still too confusing
+then you can use the configuration builder which (if installed) can be found in the
+'config_builder'. Open 'config_builder.html' in your browser and then use this graphical
+tool to setup a configuration file for the server (and additionally the transcoder).
+
+
+10.1   sc_serv_basic
+--------------------
+
+This is the base configuration from which the other configuration examples are based and
+this will get a sc_serv instance running as a local setup with no connection made to the
+YP directory.
+
+
+10.2   sc_serv_public
+---------------------
+
+This configuration file changes the required options in the sc_serv_basic configuration
+to get a sc_serv instance running as a public setup with a connection made to the YP for
+listing the stream in the directory. This shows the use of the 'include' option (see
+section 4.0.7) and how specifying a configuration option twice uses the last value found.
+
+
+10.3   sc_serv_relay
+--------------------
+
+This configuration file changes the required options in the sc_serv_public configuration
+to get a sc_serv instance running as a public setup with a source coming in from a relay
+server providing a SHOUTcast 2 stream.
+
+
+10.4   sc_serv_debug
+--------------------
+
+This configuration file can be included in any other configuration files to allow you to
+get debug logging output when trying to investigate any issues you may be experiencing.
+
+
+10.5   sc_serv_simple
+---------------------
+
+Note: Use this if you just need to get a very basic server running or are impatient or
+      are struggling to get it running despite the previous example configurations.
+
+This configuration file is designed to be used just as is and is the simplest form of the
+configuration file you can have which will allow you to get a running server to appear on
+the YP. This works on using the default settings of the server though does change some of
+the file paths inorder to fit in with the existing setup as used in the other examples.
+
+All you need to do when using this configuration file is to enter your authorisation key
+in the 'streamauthhash' line e.g. if your authorisation key is 123456789 then you change
+streamauthhash=<enter_your_auth_key_here> to streamauthhash=123456789 and save the file.

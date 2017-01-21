@@ -1,0 +1,11 @@
+<01/04/17@17:14:10> [SHOUTcast] DNAS/win32 v1.9.8 (Feb 28 2007) starting up...
+<01/04/17@17:14:10> [main] loaded config from C:\Program Files (x86)\SHOUTcast\sc_serv.ini
+<01/04/17@17:14:10> [main] initializing (usermax:32 portbase:8000)...
+<01/04/17@17:14:10> [main] No ban file found (sc_serv.ban)
+<01/04/17@17:14:10> [main] No rip file found (sc_serv.rip)
+<01/04/17@17:14:10> [main] opening source socket
+<01/04/17@17:14:10> [main] source thread starting
+<01/04/17@17:14:10> [main] opening client socket
+<01/04/17@17:14:10> [source] listening for connection on port 8001
+<01/04/17@17:14:10> [main] Client Stream thread [0] starting
+<01/04/17@17:14:10> [main] client main thread starting

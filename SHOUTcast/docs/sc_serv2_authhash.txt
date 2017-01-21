@@ -1,0 +1,115 @@
+                    Nullsoft SHOUTcast DNAS Server Authhash Management
+                               (Last Updated 17 July 2011)
+
+
+1.0   Introduction
+2.0   Management
+2.1     Creating
+2.2     Updating
+2.3     Removing
+2.4     Duplicating
+3.0   Management Issues
+
+
+1.0   Introduction
+------------------
+
+One of the key aspects of the new YP2 directory infrastructure is an authorisation key
+which is used to validate your server when it tries to connect to the YP2 infrastructure
+for any of the station(s) you run. Once this key is obtained, it will be valid for all
+root servers of the station being broadcast.
+
+You can obtain multiple authorisation keys if broadcasting the same stream content at
+different bitrates so they will appear separately in the SHOUTcast Directory listings.
+This is not needed if broadcasting the same content in MP3 and AAC+ formats as the
+SHOUTcast Directory will automatically list those streams separately.
+
+
+
+2.0   Management
+----------------
+To obtain a unique authentication key you first need to have setup the DNAS and have a
+source (such as the Source DSP or Transcoder) correctly connected so the stream is
+recognised by the DNAS. Then login to the 'Administrator Summary' page accessed from the
+'Administrator Login' on the 'DNAS Summary' page which you usually access at
+http://127.0.0.1:8000/admin.cgi if doing this on the same machine as the DNAS. If you
+have changed 'portbase' then change 8000 to the value specified for 'portbase'. If you
+are accessing this remotely then you will need to change 127.0.0.1 to the appropriate IP
+address of the machine you are trying to access.
+
+On this page you will see any streams which have sources connected to them with
+'Create Authhash', 'Update Authhash' and 'Remove Authhash' options shown as appropriate
+beneath the stream number.
+
+
+2.1   Creating
+--------------
+
+To create an authhash for a stream then you need to click the 'Create Authhash' link.
+This will take you to another page where you need to fill in the missing fields as
+applicable for your stream as the DNAS attempts to fill in fields with the information
+obtained from the connected source. Once all of the required information has been entered
+then click the 'Create Authhash' button.
+
+If there is a missing field or something is not right when attempting to create the
+authhash, then you will see a message showing what needs to be entered or changed or what
+to do to get additional help.
+
+On successful creation, the new authhash will be saved into your configuration file
+either in the root configuration file or one where there's an empty streamauthhash entry
+matching the stream identifier. When you go back to the 'Administrator Summary' page the
+'Create Authhash' link will have changed to 'Update Authhash' and 'Remove Authhash' links.
+
+ It can take up to 10 minutes for the new authhash to be fully recognised so if you
+ have made a mistake or are trying to get listed then you will need to be wait.
+
+
+2.2   Updating
+--------------
+
+Updating an authhash is the same as creating an authhash just with the existing
+information of the authhash shown in the fields allowing for them to be edited. If there
+are no issues and the authhash can be updated from the machine used (with it having the
+same external IP as used to create the authhash) then any changes made should be updated
+in the YP system.
+
+If there is a missing field or something is not right when attempting to create the
+authhash, then you will see a message showing what needs to be entered or changed or what
+to do to get additional help.
+
+ It can take up to 10 minutes for changed details to be fully recognised so if
+ you have made a mistake or are trying to get listed then you will need to wait.
+
+
+2.3   Removing
+--------------
+
+Removing an authhash is a simple action of clicking the 'Remove Authhash' link. If there
+are no issues and the authhash can be removed from the machine used (with it having the
+same external IP as used to create the authhash) then it will be removed from the YP
+system and also from your configuration file.
+
+
+2.4   Duplicating
+-----------------
+
+If you want to use the same authhash on another stream (e.g. if only the stream format is
+different or you want to group the same stream content) then you will need to manually
+edit you configuration file by setting the relevant streamauthhash entry for the required
+stream configuration group and use the 'Reload All Stream Configuration(s)' option on the
+'Administrator Summary' page.
+
+
+
+3.0   Management Issues
+-----------------------
+
+Updating or removing an authhash requires the same external IP of the machine to be found
+by the YP against what was used when the authhash was created. If this external IP has
+changed then you will need to contact support via http://forums.winamp.com/showthread.php?t=331394
+ensuring all required information is provided as is detailed.
+
+If you experience other issues with managing your authhashes via the options provided,
+make sure you follow any information provided to attempt to resolve the issue. If that
+still does not work then you will need to contact support via http://forums.winamp.com/showthread.php?t=331394
+ensuring all required information is provided as is detailed.

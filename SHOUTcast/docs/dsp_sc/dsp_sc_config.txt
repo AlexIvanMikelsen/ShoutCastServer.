@@ -1,0 +1,171 @@
+                Nullsoft SHOUTcast Source DSP Plug-in Version 2 (dsp_sc)
+                                 Configuration Examples
+                               (Last Updated 30 June 2011)
+
+
+1.0   Introduction
+2.0   Configurations
+2.1     Direct Source to a SHOUTcast v2 DNAS Server
+2.2     Direct Source to a SHOUTcast v1 DNAS Server (Legacy)
+2.3     DJ Source to the Transcoder (sc_trans) in SHOUTcast v2 Mode
+2.4     DJ Source to the Transcoder (sc_trans) in SHOUTcast v1 Mode (Legacy)
+3.0   SHOUTcast 2 Cipher Key
+
+
+
+1.0   Introduction
+------------------
+
+The aim of this document is to show you what needs to be entered in the different options
+in the plug-ins configuration window to allow it to work with the sc_serv2 and sc_trans
+configuration examples. The setups covered are:
+
+    Connecting as a source to the server in SHOUTcast 2 and SHOUTcast 1 (legacy) modes
+    Connecting as a DJ to a transcoder in SHOUTcast 2 and SHOUTcast 1 (legacy) modes
+
+
+
+2.0   Configurations
+--------------------
+
+In all of the example configurations, it is assumed that Winamp has been chosen as the
+input source for the stream(s) being created and that all of the passwords used are the
+same as those in the sc_serv2 and sc_trans example configuration files. Remember that you
+should change the example passwords when setting up your SHOUTcast system.
+
+The choice of the encoder used is left as something for you to decide upon considering
+the DSP plug-in supports MP3 and AAC along with all of the different bitrates, etc.
+However this should not cause an issue with the example setups used but is something you
+need to decide upon as part of the general process in setting up a SHOUTcast system.
+
+Finally the name of the options as shown in the english translation of the plug-in on its
+'Output' tab (see dsp_sc.txt - section 3.2) will be used in this file to identify the
+options which need to be entered. This is mentioned incase a localised version of the DSP
+plug-in is used (a nice feature implemented in version 2 of the plug-in).
+
+
+2.1   Direct Source to a SHOUTcast v2 DNAS Server
+-------------------------------------------------
+
+Connection Tab
+--------------
+
+Address : localhost (or the IP of the server if it is different from the local machine
+                     [see dsp_sc.txt - section 3.2.1 for more information] ).
+Port : 8000 (or the value set for 'portbase' [see sc_serv2.txt - section 4.0.8] ).
+Stream ID : 1 (or the value set for 'streamid' for the relevant connection being made to
+               the server [see sc_serv2.txt - section 4.0.12] ).
+
+User ID : this can be left blank and is not used with a source connection.
+Password : testing (or the value set for 'password' [see sc_serv2.txt - section 4.0.8] ).
+
+Use SHOUTcast v1 mode (for legacy servers) : ensure this is UNCHECKED.
+
+Yellow Pages Tab
+----------------
+
+Here you can enter any details as required to identify or provide contact details for
+your stream to any clients connecting or when viewed on the SHOUTcast Directory listing.
+
+Make this server public (Recommended) : The usage of this setting depends upon the value
+                                        of 'publicserver' in your server configuration.
+                                        See sc_serv2.txt - section 4.0.14 for details.
+
+
+2.2   Direct Source to a SHOUTcast v1 DNAS Server (Legacy)
+----------------------------------------------------------
+
+Connection Tab
+--------------
+
+Address : localhost (or the IP of the server if it is different from the local machine
+                     [see dsp_sc.txt - section 3.2.1 for more information] ).
+Port : 8000 (or the value set for 'portbase' for the SHOUTcast v1 DNAS server used.
+
+Password : testing (or the value set for 'password' for the SHOUTcast v1 server used.
+
+Use SHOUTcast v1 mode (for legacy servers) : ensure this is CHECKED.
+
+Yellow Pages Tab
+----------------
+
+Here you can enter any details as required to identify or provide contact details for
+your stream to any clients connecting or when viewed on the SHOUTcast Directory listing.
+
+
+2.3   DJ Source to the Transcoder (sc_trans) in SHOUTcast v2 Mode
+-----------------------------------------------------------------
+
+Connection Tab
+--------------
+
+Address : localhost (or the IP of the server if it is different from the local machine
+                     [see dsp_sc.txt - section 3.2.1 for more information] ).
+Port : 8505 (or the value set for 'djport2' [see sc_trans.txt - section 3.0.3] ).
+Stream ID : this can be left as the default value ('1') as the Transcoder effectively
+            ignores this for this connection though may be used in future versions.
+
+User ID : dj (or the value set for 'djlogin' for the respective DJ account setup in the
+              sc_trans configuration [see sc_trans.txt - section 3.0.3] ).
+Password : noise (or the value set for 'djpassword' for the respective DJ account setup
+                 in the sc_trans configuration [see sc_trans.txt - section 3.0.3] ).
+
+Use SHOUTcast v1 mode (for legacy servers) : ensure this is UNCHECKED.
+
+Yellow Pages Tab
+----------------
+
+Here you can enter any details as required to identify or provide contact details for
+your stream to any clients connecting or when viewed on the SHOUTcast Directory listing.
+
+Make this server public (Recommended) : The usage of this setting depends upon the value
+                                        of 'publicserver' in your server configuration.
+                                        See sc_serv2.txt - section 4.0.14 for details.
+
+
+2.4   DJ Source to the Transcoder (sc_trans) in SHOUTcast v1 Mode (Legacy)
+--------------------------------------------------------------------------
+
+Connection Tab
+--------------
+
+Address : localhost (or the IP of the server if it is different from the local machine
+                     [see dsp_sc.txt - section 3.2.1 for more information] ).
+Port : 8500 (or the value set for 'djport' [see sc_trans.txt - section 3.0.3] ).
+
+Password : dj:noise (or the values set for 'djlogin' and 'djpassword' for the respective
+                     DJ account setup in sc_trans's configuration [see sc_trans.txt -
+                     section 3.0.3] ).
+
+Use SHOUTcast v1 mode (for legacy servers) : ensure this is CHECKED.
+
+Yellow Pages Tab
+----------------
+
+Here you can enter any details as required to identify or provide contact details for
+your stream to any clients connecting or when viewed on the SHOUTcast Directory listing.
+
+Make this server public (Recommended) : The usage of this setting depends upon the value
+                                        of 'publicserver' in your server configuration.
+                                        See sc_serv2.txt - section 4.0.14 for details.
+
+
+3.0   SHOUTcast 2 Cipher Key
+----------------------------
+
+If you find that you do need to change the uvoxcipherkey (sc_serv2.txt - section 4.0.14)
+or the djcipher (sc_trans.txt - section 3.0.3) in you sc_serv and / or sc_trans setups
+then you can change the cipher key the DSP uses. You will only need to do this if you get
+the following status message when making a connection:
+
+    Authentication Error:
+    Cipher Does Not Match
+
+This is done currently via editing 'Cipherkey' entry in dsp_sc.ini in your Winamp config
+folder where you just need to change the string after the equal sign to the value from
+'uvoxcipherkey' or 'djcipher' depending upon what you are trying to connect to.
+
+The dsp_sc.ini file can usually be found by entering %appdata%\Winamp\plugins into the
+address bar in Windows Explorer. If it is not there then you should search for dsp_sc.ini
+and make sure to have the search program you are using to look for hidden files (this is
+just incase the OS is hiding the settings folder).

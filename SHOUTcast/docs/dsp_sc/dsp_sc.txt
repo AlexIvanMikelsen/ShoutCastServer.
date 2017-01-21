@@ -1,0 +1,456 @@
+                 Nullsoft SHOUTcast Source DSP Plug-in Version 2 (dsp_sc)
+                               (Last Updated 30 June 2011)                               
+
+
+1.0    Introduction
+2.0    Getting Started
+2.1      Installing the Plug-in
+3.0    Configuration Window
+3.1      Summary Tab
+3.2      Output Tab
+3.2.1     Connection Tab
+3.2.2     Yellow Pages Tab
+3.2.3      Encoder Tab
+3.2.4      Artwork
+3.2.5      Logs
+3.3      Input Tab
+3.3.1      Input Configuration
+3.3.2      Soundcard Mixer Control
+3.4      About Tab
+3.4.1      Documentation and Support
+4.0     Known Issues
+4.1       Soundcard Mixer Control
+5.0     SHOUTcast 2 Cipher Key
+
+
+
+1.0   Introduction to dsp_sc
+----------------------------
+
+The aim of this document is to show you the different features offered by the SHOUTcast
+Source DSP plug-in. The v2 of the plug-in is designed to work only on Winamp 5.5 and up
+due to better api usage and integration with the player. If you want to use it with an
+alternative player, then this will need to support all of the apis the plug-in may use.
+
+The key feature of the plug-in is the ability to use Winamp as a source to a sc_serv or
+sc_trans instance (or any other compatible tool which can accept SHOUTcast 1 or 2 data).
+
+Additionally the plug-in will allow you to capture an audio input from the soundcard and
+its line-in or microphone inputs (as shown in section 3.3.2).
+
+
+
+2.0   Getting Started
+---------------------
+
+To get going with dsp_sc you will need to have already setup either a server (sc_serv) or
+an alternative source to feed (like sc_trans which then feeds an sc_serv instance) and to
+have all access enabled to allow a source to connect. The plug-in can be used as either a
+full source or it can be used as a DJ connection in the case of being used with sc_trans.
+
+
+2.1   Installing the Plug-in
+----------------------------
+
+The installer will detect the Winamp install on your machine and will then install it to
+the correct location. If the detected Winamp version is prior to v5.5 or if there is no
+winamp.exe present in the folder chosen then the installer will not continue.
+
+Once installed then you will need to open Winamp and go to the following location:
+
+    Preferences -> Plug-ins -> DSP/Effect
+
+and select the 'Nullsoft SHOUTcast Source DSP' entry shown in the list of plug-ins.
+
+
+
+3.0   Configuration Window
+--------------------------
+
+The configuration window is the main part of the plug-in and is where all information for
+the connection to the server or the current status of the connection can be changed and
+viewed.
+
+Please note that when the configuration window is closed then any active connections will
+be closed. If you want to hide the window then you can click use the minimise button on
+the window and click on the notification area icon added when the minimise event occurs.
+
+
+3.1   Summary Tab
+-----------------
+
+Status / Info : This will show information about the status of the 5 possible outputs the
+                plug-in is able to provide going from not connected to current duration
+                of the connection.
+
+Note: If you double-click one of the output items you will be taken to the 'Output Tab'
+      (see section 3.3) where the view will be changed to view the current settings for
+      for output item picked.
+
+Input Meters : This will show the left and right channel audio levels as is being passed
+               through the plug-ins core which allows you to see if the input source is
+               possibly not working or just to check the volume level on the source, etc.
+
+Additionally, to the right is shown the currently selected input device (as chosen on the
+'Input Tab' (see section 3.3)
+
+
+3.2   Output Tab
+----------------
+
+This tab allows you to configure the 5 possible outputs the plug-in is able to generate
+where the settings for each output are selected by clicking the 'Output X' item in the
+list (where X is from 1 to 5).
+
+Status : This will show the current information about the output source ranging from not
+         being connected to error messages due to invalid passwords, etc.
+
+Auto Connect : This will make the plug-in attempt to run this output as soon as it is
+               started or when the option is checked if not already running when checked.
+
+Connect / Abort /        : This allows you to start a connection, abort a connection try
+Disconnect / Kill Button : or kill / disconnect an active connection. If 'Auto Connect'
+                           is checked and you click this for a disconnect action then the
+                           plug-in automatically re-starts the connection.
+
+
+3.2.1   Connection Tab
+----------------------
+
+Address : This is the address of the server to connect to and will depend upon the setup
+          which is being used. For example if the server or transcoder being connected to
+          are on the same machine then 'localhost' can be entered or the exact IP of the
+          machine for the DSP to attempt a connection to.
+
+Port : This is the port related to the 'address' of the server to connect to. This needs
+       to match 'portbase' (sc_serv2.txt - section 4.0.8) or 'serverport' (sc_trans.txt -
+       section 3.0.11).
+
+Stream ID : This is the identifier used to identify the source to the server when using a
+            SHOUTcast 2 supporting setup. This needs to match 'streamid' (sc_serv2.txt -
+            section 4.0.8) or 'uvoxstreamid' (sc_trans.txt - section 3.0.11).
+
+      Note: This is disabled if 'Use SHOUTcast v1 mode (for legacy servers)' is checked.
+
+User ID : This is the user id as specified on the server for the type of connection the
+          plug-in is being asked to make. Examples of using this would be the 'djlogin'
+          value from sc_trans.txt - section 3.0.3 though this will all depend on the
+          server configuration being used so if you have to connect to a server then you
+          will most likely be provided with a user id to use in this.
+
+    Note: This is disabled if 'Use SHOUTcast v1 mode (for legacy servers)' is checked.
+
+Password : This is the password required for accessing the server (if set on the server).
+           This needs to match 'password' (sc_serv2.txt - section 4.0.8) or 'uvoxauth'
+           (sc_trans.txt - section 3.0.11).
+
+Automatic reconnection on : This will make the plug-in attempt to connect back to the
+connection failure          server if there is a break in the connection.
+
+Reconnection timeout : This is the number of seconds for the plug-in to wait in-between
+                       any connection attempts which fail before it will try again.
+
+Use SHOUTcast v1 mode : This controls the type of source the plug-in will try to create.
+(for legacy servers)    With this checked then it will making an SHOUTcast 1 connection
+                        otherwise it will attempt to make a SHOUTcast 2 connection (this
+                        is the default behaviour on new installs of the plug-in).
+
+                        Not setting the correct mode for the server you are attempting to
+                        connect to will cause the connection attempt to fail or enter
+                        into what appears to be a hung state where you are likely to see
+                        a 'Cipher response received' if connecting in SHOUTcast 2 mode to
+                        a SHOUTcast 1 server. If the plug-in determines this is likely to
+                        have happened then the following will be shown in status area:
+
+                        'Cipher response received
+                         Try enabling 'SHOUTcast v1 mode'.'
+
+
+When the SHOUTcast 1 mode is enabled then an information panel is displayed below these
+options which shows the following message:
+
+    The DJ connection password format is
+    <djlogin>:<djpassword>  e.g.  dj:noise
+
+
+When the SHOUTcast 2 mode is enabled then an information panel is displayed below these
+options which shows the following message:
+
+    Connecting to a SHOUTcast v1 server in
+    non-legacy mode will likely cause the last
+    status message to remain on "Cipher
+    response received". To fix this you need to
+    enable the "SHOUTcast v1 mode" above.
+
+
+3.2.2   Yellow Pages Tab
+------------------------
+
+Make this server public : With this enabled, the stream will report that it wants to
+(Recommended)             appear in the SHOUTcast Directory.
+
+Name : This is the name you want to use for the source (often what will be used in
+       SHOUTcast Directory listing).
+
+URL : This is the url for the stream allowing listeners to view or get more information.
+
+Genre : This is the genre for the source and is used to categorise the stream if listed
+        on the SHOUTcast Directory listing. Select the genre from the arrow button menu.
+        It is not possible to manually enter the genre and the input field is read-only.
+
+Arrow Button : This will show a menu with known genres and sub-genres allowed for any
+               SHOUTcast Directory listings. This will only be enabled if using v1 mode
+               or if using v2 mode and 'Make this server public' is unchecked.
+
+AIM / ICQ / IRC : These allow you to specify some contact information for clients though
+                  support of these fields is only available when using v1 mode.
+
+Track Title : This allows you to either use the title information obtained from Winamp or
+              you can specify custom information about the 'now' and 'next' titles which
+              is then sent with the source metadata when using the 'Send Update' button.
+
+        Note: The 'Send Update' button is enabled when there is a title entered or if you
+              have made an attempt to edit the existing title entered. When using the
+              non-legacy mode then the 'next' title field will become available as long
+              as a title has been entered allowing for it to be changed without altering
+              the title.
+
+Send next track titles to the server (if available) : This allows you to control whether
+                                                      the plug-in will send next title
+                                                      information in SHOUTcast 2 mode.
+
+
+3.2.3   Encoder Tab
+-------------------
+
+This tab allows you to specify the encoder to be used to create the output stream from
+the input stream the plug-in gets. The following encoders are available with the plug-in:
+
+    MP3    (audio/mpeg)
+    AAC    (audio/aacp)
+
+The AAC (actually ADTS-AAC) encoding is provided by enc_aacplus.dll (Winamp 5.1 to 5.61)
+or enc_fhgaac.dll (Winamp 5.62 and up). If this is not detected in the Winamp plug-ins
+folder then only MP3 encoding will be shown as available.
+
+Depending upon the encoder selected the 'encoder settings' section will provide different
+options for controlling the settings of the encoder (usually a button to open an extra
+configuration window or a dropdown list with fixed options to choose from).
+
+
+3.2.4   Artwork
+---------------
+
+This tab allows you to specify whether in-stream artwork will be sent to the SHOUTcast
+server and if so then what type of artwork will be sent which can be for the station in
+general as well as per file artwork (much like album art displays in media players).
+
+
+Send in-stream artwork : Enables or disables sending of in-stream artwork.
+
+                   Note: If this is enabled and then disabled, it is possible that the
+                         plug-in will send some clear artwork messages after disabling
+                         this option to ensure there is no artwork cached by the server.
+
+Send artwork from the playing file : This sends artwork from the currently playing song
+                    (if available)   to the server and acts in the same way as the album
+                                     art view in most media players.
+
+                              Notes: If unchecked or there is no artwork for the playing
+                                     song then the SHOUTcast server may be sent a clear
+                                     artwork message as applicable.
+
+                                     This is sent as a PNG image to the SHOUTcast server.
+
+Send artwork for stream branding : This will send the image as selected in the box below
+                                   to the server to act as the station or stream image.
+
+                             Note: If this is left empty then the server may be sent a
+                                   clear artwork message as applicable.
+
+
+Notes: Using the plug-in with a connection to a legacy server will cause the following
+       notice to be shown:
+
+       'Stream is setup for a SHOUTcast v1 server
+        which does not support in-stream artwork.
+
+        To send in-stream artwork, uncheck the
+        "SHOUTcast v1 mode" option and ensure
+        you connect to a SHOUTcast v2 server.'
+
+
+       The plug-in is only able to send in-stream artwork upto 511 KiB (523680 bytes) in
+       size due to the SHOUTcast 2 protocol specification for metadata packets. If this
+       limit is reached then the artwork will not be sent and instead the server will get
+       a clear artwork message.
+
+       Viewing the in-stream artwork depends on native playback support of SHOUTcast v2
+       streams in the player used by the client so without a compatible player the client
+       will not be able to view it is as it is not available with SHOUTcast v1 streams.
+
+
+3.2.5   Logs
+------------
+
+This tab allows you to specify the logging options of the status messages as shown at the
+top of this page. Additionally it also provides the means to log the filepath of the next
+tracks (if known) which are going to be played by Winamp with support for logging of the
+track titles if using the xml output mode. 
+
+
+By default the main logging options are not enabled though this can be used for tracking
+problems with the plug-in such as if you are having connection issues to the server.
+
+Enable logging of connection status messages : Enables or disables connection logging.
+
+Clear log file on logging startup : This will reset the log everytime the plug-in starts.
+
+Ignore 'Sent X bytes' status messages : This will not log any 'Sent X bytes' messages as
+                                        shown in the status area of this page.
+
+Open log file... : This will open the log file in the associated program for .log files.
+
+Clear log file : This will clear the log file if it exists. It will not remove the file.
+
+
+Enable next track logging : This will enable creating a log file (based on the following
+                            options) of the known next tracks to be played by Winamp.
+
+Save report as xml instead of plain text : Changing this will create the log as an xml
+                                           file containing filepath and title with each
+                                           item identified by the 'seq' attribute.
+
+Notes: The next track logging is only updated when the plug-in detects a track change. As
+       well if the plain text / xml mode is changed or the plug-in starts then the file
+       contents will be cleared until the next track title change happens.
+
+
+3.3   Input Tab
+---------------
+
+3.3.1   Input Configuration
+---------------------------
+
+Input Device : This allows you to choose between using Winamp or your soundcard (usually
+               the line-in) as the input source for the output stream the plug-in makes.
+               Depending upon the selection made additional options will be shown below.
+
+Input Levels : This will show the left and right channel audio levels as is being passed
+               through the plug-ins core which allows you to see if the input source is
+               possibly not working or just to check the volume level on the source, etc.
+
+Input Settings : When the soundcard input is selected then this allows for control over
+                 the sample rate used on the input source.
+
+
+3.3.2   Soundcard Mixer Control
+-------------------------------
+
+Choose Microphone : This will allow you to choose any of the input devices reported by
+                    the OS for use with the microphone overlay mode the plug-in provides.
+
+Refresh Button : This allows you to refresh the capture device list on Vista / Windows 7
+                 (is disabled otherwise) since the plug-in was started. This is useful if
+                 you have connected a device to the machine and now want to use it.
+
+Open Mixer : This will open the operating systems recording and playback options (when
+             using Windows 2000 / XP) which will allow you to change any required input
+             and output settings for the system (though the amount you can change does
+             depend upon the operating system being used - see section 4.0).
+
+Music Level : This controls the Winamp output level (from no audio to full audio level).
+
+BG Level : This controls the Winamp output level when the 'Push to Talk' option is active
+           (from no audio to full audio level).
+
+Mic Level : This controls the chosen microphone device's output level when the 'Push to
+            Talk' option is active (from no audio to full audio level).
+
+Fade Time : This controls the amount of time it takes for the audio to fade from the non
+            'Push to Talk' mode to 'Push to Talk' being the active mode in usage (from no
+            fade i.e. instantly changes to 2.5 second fade duration).
+
+Capture Device Fade Time : This controls the amount of time it takes for the selected
+                           capture device to fade from the non 'Push to Talk' mode to
+                           'Push to Talk' being the active mode in usage (from no fade
+                           i.e. instantly changes to 2.5 second fade duration).
+
+Push to Talk : When this is pressed then the chosen microphone device becomes the active
+               input source as used by any active output streams (see section 3.2). When
+               enabled this button will appear in an activated state.
+
+Lock : When this is pressed it will toggle the 'Push to Talk' mode on or off depending on
+       the current state of this option when it pressed. When enabled this will appear in
+       an activated state along with the 'Push to Talk' button.
+
+Arrow Button : This will show a menu with the option "Enable 'Push to Talk' on startup"
+               allowing for the mode to be re-enabled when the plug-in is started. This
+               may be of use as the plug-in turns off the mode and sets the system levels
+               back to the non-pushed mode when the plug-in's window is closed.
+
+
+3.4   About Tab
+---------------
+
+This tab provides information about the version of the plug-in you are using - useful for
+determining if you are using an older version of the plug-in or when reporting issues.
+
+
+3.4.1   Documentation and Support
+---------------------------------
+
+This part of the tab provides links to access the online documentation and also for going
+to the SHOUTcast support forum if issues are being experienced with the plug-in's usage.
+
+The online documentation is typically the most current version of this file in an online
+form as available via http://wiki.winamp.com/wiki/Source_DSP_Plug-in
+
+The support forum is accessed via http://forums.winamp.com/forumdisplay.php?f=140
+
+
+
+4.0   Known Issues
+------------------
+
+The following are currently known issue(s) to affect the currently released build of the
+Source DSP plug-in:
+
+4.1   Soundcard Mixer Control
+-----------------------------
+
+Issue: The soundcard mixer control does not work correctly or as expected on Vista /
+       Windows 7 especially with the handling of the selected 'microphone' device due to
+       changes in the audio system which prevent the capture handling from Windows 2000 /
+       XP working in the same way. Windows 2000 / XP should still work as expected.
+
+Workaround: The only obvious work around is to use the features the OS provides to enable
+            the 'Listen to this device' option via the system's recording devices feature
+            and then mix the levels with the controls the OS provides.
+
+Expected Resolution: This issue is still being investigated and hopefully a solution will
+                     be provided to allow for control of the input device in unison with
+                     the selected 'microphone' device with-in the plug-ins interface when
+                     using this mode.
+
+
+
+5.0   SHOUTcast 2 Cipher Key
+----------------------------
+
+If you find that you do need to change the uvoxcipherkey (sc_serv2.txt - section 4.0.14)
+or the djcipher (sc_trans.txt - section 3.0.3) in you sc_serv and / or sc_trans setups
+then you can change the cipher key the DSP uses. You will only need to do this if you get
+the following status message when making a connection:
+
+    Authentication Error:
+    Cipher Does Not Match
+
+This is done currently via editing 'Cipherkey' entry in dsp_sc.ini in your Winamp config
+folder where you just need to change the string after the equal sign to the value from
+'uvoxcipherkey' or 'djcipher' depending upon what you are trying to connect to.
+
+The dsp_sc.ini file can usually be found by entering %appdata%\Winamp\plugins into the
+address bar in Windows Explorer. If it is not there then you should search for dsp_sc.ini
+and make sure to have the search program you are using to look for hidden files (this is
+just incase the OS is hiding the settings folder).
